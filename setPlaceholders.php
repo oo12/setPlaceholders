@@ -19,16 +19,18 @@
  *
  *
  * @package setPlaceholders
- * @version 1.0.0-pl
  */
 
 /**
- * GitHub: https://github.com/oo12/setPlaceholders
+ * Documentation, bug reports, etc.
+ * https://github.com/oo12/setPlaceholders
  *
  * Variables
  * ---------
  *
  * @var modX $modx
+ * @var input $input
+ * @var options $options
  *
  *
  * Parameters
@@ -53,9 +55,9 @@
  *   &placeholders=`color==#a35c0a || params == w=240&h=360&q=65`]]
  *
  * Sets the placeholders:
- *   [[+ph.pagetitle]] - Resource 13's pagetitle
- *   [[+ph.tv.someTV]] - value of resource 13's TV someTV
- *   [[+ph.get.person]] - value of $_GET['person'] (from the URL)
+ *   [[+sph.pagetitle]] - Resource 13's pagetitle
+ *   [[+sph.tv.someTV]] - value of resource 13's TV someTV
+ *   [[+sph.get.person]] - value of $_GET['person'] (from the URL)
  *   [[+color]] - #a35c0a
  *   [[+params]] - w=240&h=360&q=65
  *
@@ -66,7 +68,14 @@
  *
  * Returns the value of someTV for the current resource's parent, or
  * "No such TV" if it's not found.  It also puts this value in
- * [[+ph.parent.tv.someTV]]
+ * [[+sph.parent.tv.someTV]]
+ *
+ *
+ * As an output filter:
+ *
+ * [[*someTV:eq=`foo`:then=`bar`:else=`nobar`:setPlaceholders=`fb`]]
+ *
+ * Returns the value of the expression and also stores it in [[+fb]]
  *
  *
  * Whitespace around || and !! and == is fine; it'll be trimmed off if present.
@@ -74,11 +83,15 @@
  * @package setPlaceholders
  **/
 
+if ( isset($input) && $options ) {  // if we're being used as an output filter
+	$modx->setPlaceholder($options, $input);
+	return $input;
+}
 
 // handle options
 $id = $id ? intval($id) : $modx->resource->get('id');
 $fields = $fields ? explode('||', $fields) : false;
-$prefix = isset($prefix) ? $prefix : 'ph.';
+$prefix = isset($prefix) ? $prefix : 'sph.';
 $placeholders = $placeholders ? explode('||', $placeholders) : NULL;
 $delimiter = isset($delimiter) ? $delimiter : ',';
 

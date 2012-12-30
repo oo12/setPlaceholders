@@ -1,0 +1,5 @@
+Changelog for setPlaceholders
+
+setPlaceholders 1.0.0-pl
+---------------------------------
+Initial Version
