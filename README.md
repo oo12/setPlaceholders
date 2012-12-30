@@ -35,7 +35,7 @@ This is the equivalent of:<br>```[[getResourceField? &id=`[[*parent]]` &field=`s
    Returns the value of the expression and also stores it in [[+fb]] for later use.
 
 4. One more example, with some lesser-used options:<br>
-```[[setPlaceholders? &fields=`parent.pagetitle||parent.parent.pagetitle` &prefix=`` &output=`1`  
+```[[setPlaceholders? &fields=`parent.pagetitle||parent.parent.pagetitle` &prefix=`` &output=`1`
 &delimiter=` > `]]```<br>
 Returns: Page Title #1 > Page Title #2 (of course it&rsquo;d be the actual pagetitles)<br>
 Sets the placeholders:<br>
@@ -51,11 +51,11 @@ Properties
 <table>
 <tr><th>Name</th><th>Description</th><th>Default</th></tr>
 <tr>
-  <td>&id</td>
+  <td>&amp;id</td>
   <td>The resource id to use</td>
   <td>current resource</td>
 </tr><tr>
-  <td>&fields</td>
+  <td>&amp;fields</td>
   <td>A list of fields to retrieve, separated by ||<br>
     <em>Field names may be prefixed by</em>:<br>
     <strong>tv.</strong> – to get a TV<br><strong>parent.</strong> – to get a field from the resource&rsquo;s parent. Can be used multiple times to get a parent&rsquo;s parent, etc. and can be a tv (ex: parent.parent.tv.someTV).<br>
@@ -65,18 +65,18 @@ Properties
     Placeholder names are a prefix (see &amp;prefix) plus the field name. Ex: &amp;fields=`tv.someTV || parent.id` will set the placeholders [[+sph.tv.someTV]] and [[+sph.parent.id]]</td>
   <td></td>
 </tr><tr>
-  <td>&prefix</td>
+  <td>&amp;prefix</td>
   <td>Prepended to all placeholder names from &amp;fields to reduce the likelihood of variable name conflicts. Not added to any user-specified placeholders in &amp;placeholders. Can be set to an empty string to eliminate the prefix.</td>
   <td>sph.</td>
 </tr><tr>
-  <td>&placeholders</td>
+  <td>&amp;placeholders</td>
   <td>An optional list of user-defined placeholders to set<br>Format: name1==value1 || name2==value2</td>
   <td></td>
 </tr><tr>
-  <td>&output</td><td>Output mode.<br><em>No</em> (0): only set placeholders<br><em>Yes</em> (1): also output the value of any placeholders. This allows the snippet to be used like getResourceField. Multiple values will be separated by &amp;delimiter.</td>
+  <td>&amp;output</td><td>Output mode.<br><em>No</em> (0): only set placeholders<br><em>Yes</em> (1): also output the value of any placeholders. This allows the snippet to be used like getResourceField. Multiple values will be separated by &amp;delimiter.</td>
   <td>No</td>
 </tr><tr>
-  <td>&delimiter</td>
+  <td>&amp;delimiter</td>
   <td>Separates values when results are returned as a string (i.e. &amp;output=`1`)</td>
   <td>,</td>
 </tr>
@@ -92,4 +92,4 @@ Notes
 -----
 
 * It's fine to add white space around ||, ==, and !! for legibility. It'll get trimmed off.
-* If you&rsquo;re using get or post in &fields, you&rsquo;ll want to call setPlaceholders uncached. And since these variables can contain anything–including various hack attempts–be sure to validate and sanitize them properly before passing them on as input to something else, especially a SQL query.
+* If you&rsquo;re using get or post in &amp;fields, you&rsquo;ll want to call setPlaceholders uncached. And since these variables can contain anything–including various hack attempts–be sure to validate and sanitize them properly before passing them on as input to something else, especially a SQL query.
