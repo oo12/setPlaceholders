@@ -29,8 +29,8 @@ Returns the value of someTV for the current resource's parent, or &ldquo;No such
 This is the equivalent of:<br>```[[getResourceField? &id=`[[*parent]]` &field=`someTV` &isTV=`1` &processTV=`1` &default=`No such TV`]]```
 
 3. As an output filter:<br>
-```[[*someTV:eq=`foo`:then=`bar`:else=`nobar`:setPlaceholders=`fb`]]```<br>
-Returns the value of the expression and also stores it in [[+fb]] for later use.
+``` [[*someTV:eq=`foo`:then=`bar`:else=`nobar`:setPlaceholders=`fb`]] ```<br>
+   Returns the value of the expression and also stores it in [[+fb]] for later use.
 
 4. One more example, with some lesser-used options:<br>
 ```[[setPlaceholders? &fields=`parent.pagetitle||parent.parent.pagetitle` &prefix=`` &output=`1`  
@@ -80,7 +80,6 @@ Properties
 </tr>
 </table>
 
-It's fine to add white space around ||, ==, and !! for legibility. It'll get trimmed off.
 
 *When used as an output filter:*
 
@@ -89,4 +88,5 @@ It's fine to add white space around ||, ==, and !! for legibility. It'll get tri
 Notes
 -----
 
-If you&rsquo;re using get or post in &fields, you&rsquo;ll want to call setPlaceholders uncached. And since these variables can contain anything–including various hack attempts–be sure to validate and sanitize them properly before passing them on as input to something else, especially a SQL query.
+* It's fine to add white space around ||, ==, and !! for legibility. It'll get trimmed off.
+* If you&rsquo;re using get or post in &fields, you&rsquo;ll want to call setPlaceholders uncached. And since these variables can contain anything–including various hack attempts–be sure to validate and sanitize them properly before passing them on as input to something else, especially a SQL query.
