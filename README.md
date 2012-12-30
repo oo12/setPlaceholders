@@ -14,8 +14,10 @@ Let&rsquo;s start with some examples.
 Examples
 --------
 
-1. ```[[setPlaceholders? &id=`13` &fields=`pagetitle || tv.someTV !! [[snippetX]] || get.person`  
-&placeholders=`color==#a35c0a || params == w=240&h=360&q=65`]]```<br>
+1. ```[[setPlaceholders? &id=`13` ```<br>
+```&fields=`pagetitle || tv.someTV !! [[snippetX]] || get.person`  ```<br>
+```&placeholders=`color==#a35c0a || params == w=240&h=360&q=65` ```<br>
+```]]```<br>
 Sets the placeholders:<br>
 ```[[+sph.pagetitle]]``` Resource 13's pagetitle<br>
 ```[[+sph.tv.someTV]]``` value of resource 13's TV someTV, or the output from snippetX if not found<br>
@@ -80,6 +82,7 @@ Properties
 </tr>
 </table>
 
+<br>
 
 *When used as an output filter:*
 
