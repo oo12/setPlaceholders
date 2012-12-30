@@ -14,7 +14,8 @@ Let&rsquo;s start with some examples.
 Examples
 --------
 
-1. ```[[setPlaceholders? &id=`13` ```<br>
+1. Showing most of the functionality:<br>
+```[[setPlaceholders? &id=`13` ```<br>
 ```&fields=`pagetitle || tv.someTV !! [[snippetX]] || get.person`  ```<br>
 ```&placeholders=`color==#a35c0a || params == w=240&h=360&q=65` ```<br>
 ```]]```<br>
