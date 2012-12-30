@@ -73,7 +73,7 @@ Properties
   <td>An optional list of user-defined placeholders to set<br>Format: name1==value1 || name2==value2</td>
   <td></td>
 </tr><tr>
-  <td>&output</td><td>Output mode.<br>_No_: only set placeholders<br>_Yes_: also output the value of any placeholders. This allows the snippet to be used like getResourceField. Multiple values will be separated by &amp;delimiter.</td>
+  <td>&output</td><td>Output mode.<br><em>No</em> (0): only set placeholders<br><em>Yes</em> (1): also output the value of any placeholders. This allows the snippet to be used like getResourceField. Multiple values will be separated by &amp;delimiter.</td>
   <td>No</td>
 </tr><tr>
   <td>&delimiter</td>
