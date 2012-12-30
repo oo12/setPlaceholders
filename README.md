@@ -14,7 +14,8 @@ Let&rsquo;s start with some examples.
 Examples
 --------
 
-1. Showing most of the functionality:<br>
+
+* Showing most of the functionality:<br>
 ```[[setPlaceholders? &id=`13` ```<br>
 ```&fields=`pagetitle || tv.someTV !! [[snippetX]] || get.person`  ```<br>
 ```&placeholders=`color==#a35c0a || params == w=240&h=360&q=65` ```<br>
@@ -26,16 +27,17 @@ Sets the placeholders:<br>
 ```[[+color]]``` #a35c0a<br>
 ```[[+params]]``` w=240&h=360&q=65
 
-2. As a getResourceField replacement:<br>
+* As a getResourceField replacement:<br>
 ```[[setPlaceholders? &fields=`parent.tv.someTV !! No such TV` &output=`1`]]```<br>
 Returns the value of someTV for the current resource's parent, or &ldquo;No such TV&rdquo; if it&rsquo;s empty or not found.  It also puts this value in ```[[+sph.parent.tv.someTV]]```<br>
-This is the equivalent of:<br>```[[getResourceField? &id=`[[*parent]]` &field=`someTV` &isTV=`1` &processTV=`1` &default=`No such TV`]]```
+This is the equivalent of:<br>
+```[[getResourceField? &id=`[[*parent]]` &field=`someTV` &isTV=`1` &processTV=`1` &default=`No such TV`]]```
 
-3. As an output filter:<br>
+* As an output filter:<br>
 ``` [[*someTV:eq=`foo`:then=`bar`:else=`nobar`:setPlaceholders=`fb`]] ```<br>
-   Returns the value of the expression and also stores it in [[+fb]] for later use.
+Returns the value of the expression and also stores it in [[+fb]] for later use.
 
-4. One more example, with some lesser-used options:<br>
+* One more example, with some lesser-used options:<br>
 ```[[setPlaceholders? &fields=`parent.pagetitle||parent.parent.pagetitle` &prefix=`` &output=`1`
 &delimiter=` > `]]```<br>
 Returns: Page Title #1 > Page Title #2 (of course it&rsquo;d be the actual pagetitles)<br>
