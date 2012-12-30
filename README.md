@@ -21,14 +21,12 @@ Examples
 --------
 
 1. ```[[setPlaceholders? &id=`13` &fields=`pagetitle || tv.someTV !! [[snippetX]] || get.person`   &placeholders=`color==#a35c0a || params == w=240&h=360&q=65`]]```
-Sets the placeholders:
-
-  * ```[[+ph.pagetitle]]``` Resource 13's pagetitle
-  * ```[[+ph.tv.someTV]]``` value of resource 13's TV someTV, or the output from snippetX if not found<br>
-  * ```[[+ph.get.person]]``` value of $_GET['person']<br>
-  * ```[[+color]]``` #a35c0a<br>
-  * ```[[+params]]``` w=240&h=360&q=65
-
+Sets the placeholders:<br>
+```[[+ph.pagetitle]]``` Resource 13's pagetitle<br>
+```[[+ph.tv.someTV]]``` value of resource 13's TV someTV, or the output from snippetX if not found<br>
+```[[+ph.get.person]]``` value of $_GET['person']<br>
+```[[+color]]``` #a35c0a<br>
+```[[+params]]``` w=240&h=360&q=65
 
 2. As a getResourceField replacement:
 ```[[setPlaceholders? &fields=`parent.tv.someTV !! No such TV` &output=`1`]]```<br>
