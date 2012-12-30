@@ -69,7 +69,7 @@ Properties
   <td></td>
 </tr><tr>
   <td>&amp;prefix</td>
-  <td>Prepended to all placeholder names from &amp;fields to reduce the likelihood of variable name conflicts. Not added to any user-specified placeholders in &amp;placeholders. Can be set to an empty string to eliminate the prefix.</td>
+  <td>Prepended to all placeholder names from &amp;fields to reduce the likelihood of placeholder name conflicts. Not added to any user-specified placeholders in &amp;placeholders. Can be set to an empty string to eliminate the prefix.</td>
   <td>sph.</td>
 </tr><tr>
   <td>&amp;placeholders</td>
