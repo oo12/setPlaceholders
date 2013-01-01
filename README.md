@@ -38,8 +38,8 @@ This is the equivalent of:<br>
 Returns the value of the expression and also stores it in [[+fb]] for later use.
 
 * Using &amp;prefix to set placeholders for the same field from different resources:<br>
-```[[setPlaceholders? &amp;id=`13` &amp;field=`tv.varA` &amp;prefix=`r13.`]]```<br>
-```[[setPlaceholders? &amp;id=`14` &amp;field=`tv.varA` &amp;prefix=`r14.`]]```<br>
+```[[setPlaceholders? &id=`13` &field=`tv.varA` &prefix=`r13.`]]```<br>
+```[[setPlaceholders? &id=`14` &field=`tv.varA` &prefix=`r14.`]]```<br>
 Sets the placeholders:<br>
 ```[[+r13.tv.varA]]``` and ```[[+r14.tv.varA]]```
 
