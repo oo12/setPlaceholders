@@ -37,6 +37,12 @@ This is the equivalent of:<br>
 ``` [[*someTV:eq=`foo`:then=`bar`:else=`nobar`:setPlaceholders=`fb`]] ```<br>
 Returns the value of the expression and also stores it in [[+fb]] for later use.
 
+* Using &amp;prefix to set placeholders for the same field from different resources:<br>
+```[[setPlaceholders? &amp;id=`13` &amp;field=`tv.varA` &amp;prefix=`r13.`]]```<br>
+```[[setPlaceholders? &amp;id=`14` &amp;field=`tv.varA` &amp;prefix=`r14.`]]```<br>
+Sets the placeholders:<br>
+```[[+r13.tv.varA]]``` and ```[[+r14.tv.varA]]```
+
 * One more example, with some lesser-used options:<br>
 ```[[setPlaceholders? &fields=`parent.pagetitle||parent.parent.pagetitle` &prefix=`` &output=`1`
 &delimiter=` > `]]```<br>
