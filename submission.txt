@@ -1,0 +1,98 @@
+50e0c1faf2455411fb00002e-50e0c1fbf2455411fb00002f
+50e9cb90f245544849000072-50e9cb90f245544849000073
+
+
+A snippet for getting fields and setting placeholders.
+Placeholders have a number of useful applications. Essentially they can be used as local variables in a template.
+setPlaceholders provides a convenient way of gathering up various data and putting them into placeholders or returning them as output.
+May also be used as an output filter to store the result of an expression for later use.
+
+
+
+Examples
+
+1. Showing most of the functionality:
+
+ [[setPlaceholders?
+
+  &id=`13`
+
+  &fields=`pagetitle || tv.someTV !! [[snippetX]] || get.person`
+
+  &placeholders=`color==#a35c0a || params == w=240&h=360&q=65`
+
+ ]]
+
+Sets the placeholders:
+
+[[+sph.pagetitle]] Resource 13's pagetitle
+
+[[+sph.tv.someTV]] value of resource 13's TV someTV, or the output from snippetX if not found
+
+[[+sph.get.person]] value of $_GET['person']
+
+[[+color]] #a35c0a
+
+[[+params]] w=240&h=360&q=65
+
+
+
+2. As a getResourceField replacement:
+
+[[setPlaceholders?
+
+  &fields=`parent.tv.someTV !! No such TV` &output=`1`
+
+]]
+
+Returns the value of someTV for the current resource's parent, or “No such TV” if it’s empty or not found. It also puts this value in [[+sph.parent.tv.someTV]]
+
+This is the equivalent of:
+
+[[getResourceField?
+
+  &id=`[[*parent]]`
+
+  &field=`someTV`
+
+  &isTV=`1`
+
+  &processTV=`1`
+
+  &default=`No such TV`
+
+]]
+
+
+
+3. As an output filter:
+
+[[*someTV:eq=`foo`:then=`bar`:else=`nobar`:setPlaceholders=`fb`]]
+
+Returns the value of the expression and also stores it in [[+fb]] for later use.
+
+
+4. Using &prefix to set placeholders for the same field from different resources:
+[[setPlaceholders? &id=`13` &field=`tv.varA` &prefix=`r13.`]]
+[[setPlaceholders? &id=`14` &field=`tv.varA` &prefix=`r14.`]]
+
+Sets the placeholders:
+[[+r13.tv.varA]] and [[+r14.tv.varA]]
+
+
+4. One more example, with some lesser-used options:
+
+[[setPlaceholders? &fields=`parent.pagetitle||parent.parent.pagetitle` &prefix=`` &output=`1` &delimiter=` > `]]
+
+Returns: Page Title #1 > Page Title #2 (of course it’d be the actual pagetitles)
+
+Sets the placeholders:
+
+[[+parent.pagetitle]] The current resource’s parent’s pagetitle
+
+[[+parent.parent.pagetitle]] The current resource’s grandparent’s pagetitle
+
+
+Download and install.  One snippet, setPlaceholders, will be added.
+Have a look at the default properties for a quick explanation, or see the full documentation.
+Call as a snippet or output filter.

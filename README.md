@@ -1,7 +1,7 @@
 setPlaceholders
 ===============
 
-A simple MODX 2.x snippet for getting fields and setting placeholders.
+A simple MODX 2.x snippet for getting fields and setting placeholders.  Download from the MODX [Extras Repository](http://modx.com/extras/package/setplaceholders).
 
 Placeholders have a number of useful applications.  Essentially they can be used as local variables in a template or chunk.  They&rsquo;ve always been simple to set from within a snippet; setPlaceholders makes it easy to set them without any PHP coding.
 
