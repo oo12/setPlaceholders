@@ -1,5 +1,10 @@
 Changelog for setPlaceholders
 
+setPlaceholders 1.0.1-pl
+---------------------------------
+* Fix a bug that can cause a PHP warning in some cases.
+
+
 setPlaceholders 1.0.0-pl
 ---------------------------------
 Initial Version

@@ -19,7 +19,7 @@
  *
  * @package setPlaceholders
  * @author Jason Grant
- * @version 1.0.0-pl
+ * @version 1.0.1-pl
  */
 
 /**
@@ -91,9 +91,9 @@ if ( isset($input) && $options ) {  // if we're being used as an output filter
 
 // handle options
 $id = $id ? intval($id) : $modx->resource->get('id');
-$fields = $fields ? explode('||', $fields) : false;
+$fields = $fields ? explode('||', $fields) : array();
 $prefix = isset($prefix) ? $prefix : 'sph.';
-$placeholders = $placeholders ? explode('||', $placeholders) : NULL;
+$placeholders = $placeholders ? explode('||', $placeholders) : array();
 $delimiter = isset($delimiter) ? $delimiter : ',';
 
 if ($fields) {  // if we'll need to be looking up anything..
