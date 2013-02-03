@@ -33,26 +33,26 @@ Sets the placeholders:<br>
 ```[[+color]]``` #a35c0a
 
 * As an output filter:<br>
-<pre> [[*someTV:eq=\`foo\`:then=\`bar\`:else=\`nobar\`:setPlaceholders=\`fb\`]] </pre>
+<pre>[[*someTV:eq=`foo`:then=`bar`:else=`nobar`:setPlaceholders=`fb`]] </pre>
 Returns the value of the expression and also stores it in [[+fb]] for later use on the page.
 
 * As a getResourceField replacement:<br>
-<pre>[[setPlaceholders? &ph=\`Uparent2.tv.someTV !! "No such TV"\` &output=\`1\`]]</pre><br>
+<pre>[[setPlaceholders? &ph=`Uparent2.tv.someTV !! "No such TV"` &output=`1`]]</pre><br>
 Returns the value of someTV for the second-highest parent of the current resource, or &ldquo;No such TV&rdquo; if that TV is empty or not found.  It also puts this value in ```[[+sph.Uparent2.tv.someTV]]```<br>
 This is the equivalent of:<br>
-<pre>[[getResourceField? &id=\`[[UltimateParent? &topLevel=\`2\`]]\`
-&nbsp;	&field=\`someTV\` &isTV=\`1\` &processTV=\`1\` &default=\`No such TV\`]]</pre>
+<pre>[[getResourceField? &id=`[[UltimateParent? &topLevel=`2`]]`
+&nbsp;	&field=`someTV` &isTV=`1` &processTV=`1` &default=`No such TV`]]</pre>
 
 * Getting some URL parameters:<br>
-<pre>[[!setPlaceholders? &ph=\`get.type !! "1" || person == get.person\`]]</pre>
+<pre>[[!setPlaceholders? &ph=`get.type !! "1" || person == get.person`]]</pre>
 Sets the placeholders:<br>
-```[[+sph.get.type]]``` $_GET['type'] (or _1_ if there's no type given)<br>
-```[[+person]]``` $_GET['person']
+```[[+sph.get.type]]``` $\_GET\['type'\] (or _1_ if there's no type given)<br>
+```[[+person]]``` $\_GET\['person'\]
 
 * One more example, with some other options:<br>
-<pre>[[setPlaceholders? &id=\`13\`
-&nbsp; &ph=\`parent.longtitle || parent2.longtitle !! "[[someSnippet]]"\`
-&nbsp; &prefix=\`\` &output=\`1\` &delimiter=\` > \`
+<pre>[[setPlaceholders? &id=`13`
+&nbsp; &ph=`parent.longtitle || parent2.longtitle !! "[[someSnippet]]"`
+&nbsp; &prefix=`` &output=`1` &delimiter=` > `
 ]]</pre>
 Returns: _Long Title #1 > Long Title #2_ (of course it'd be the actual longtitles)<br>
 Sets the placeholders:<br>
