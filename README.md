@@ -78,7 +78,7 @@ Properties
 </tr><tr>
   <td>&amp;ph</td>
   <td>A list of placeholders to set, separated by ||<br>
-  	This property offers a fairly rich syntax; see the <a href="#ph-syntax">special section</a> on it below for a complete explanation.
+  	This property offers a fairly rich syntax; see the <a href="#ph-property-syntax">special section</a> on it below for a complete explanation.
     </td>
   <td></td>
 </tr><tr>
@@ -105,7 +105,7 @@ Properties
 
 <br>
 
-<a id="ph-syntax"></a>&amp;ph Property Syntax
+&amp;ph Property Syntax
 -----------------------
 
 &amp;ph is where you specify all the placeholders you want set.  Separate multiple ones by ```||```.
