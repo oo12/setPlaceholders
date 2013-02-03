@@ -24,6 +24,7 @@ $properties = array(
           'type' => 'textfield',
           'options' => '',
           'value' => '',
+          'area' => 'Deprecated',
           'lexicon' => 'setplaceholders:default'
           ),
     array(
@@ -56,6 +57,14 @@ $properties = array(
           'type' => 'textfield',
           'options' => '',
           'value' => 'sph.',
+          'lexicon' => 'setplaceholders:default'
+          ),
+    array(
+          'name' => 'ph',
+          'desc' => 'prop_sph.ph_desc',
+          'type' => 'textfield',
+          'options' => '',
+          'value' => '',
           'lexicon' => 'setplaceholders:default'
           )
 );

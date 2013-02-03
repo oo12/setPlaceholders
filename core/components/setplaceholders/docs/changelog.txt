@@ -1,10 +1,25 @@
 Changelog for setPlaceholders
 
+setPlaceholders 1.1.0-pl
+------------------------
+* Add &ph property with a more powerful syntax.  It adds:
+  - "Ultimate parent" functionality
+  - ability to specify different resource IDs
+  - optional user-defined placeholder names
+  - parsing of default values
+
+* &fields is now deprecated, but retained for backwards compatibility
+
+* Performance and caching improvements
+
+* fix an issue that can generate PHP notices
+
+
 setPlaceholders 1.0.1-pl
----------------------------------
+------------------------
 * Fix a bug that can cause a PHP warning in some cases.
 
 
 setPlaceholders 1.0.0-pl
----------------------------------
+------------------------
 Initial Version

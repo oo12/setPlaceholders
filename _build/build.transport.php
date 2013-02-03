@@ -2,8 +2,6 @@
 /**
  * setPlaceholders Build Script
  *
- * Copyright 2012 Jason Grant
- *
  * setPlaceholders is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any
@@ -31,7 +29,7 @@
 /* Set package info be sure to set all of these */
 define('PKG_NAME','setPlaceholders');
 define('PKG_NAME_LOWER','setplaceholders');
-define('PKG_VERSION','1.0.1');
+define('PKG_VERSION','1.1.0');
 define('PKG_RELEASE','pl');
 define('PKG_CATEGORY','setPlaceholders');
 
