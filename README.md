@@ -135,3 +135,5 @@ A placeholder consists of 1&ndash;3 parts:
 Prefixes may be chained where it makes sense.  For instance: ```parent.pagetitle``` or ```42.parent3.tv.someTV```.
 
 setPlaceholders caches the results of some MODX API calls it makes, so getting multiple fields from the same resource or from various parents of the same resource is quite efficient if you put them all in the same setPlaceholders call.
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/34a8457ccfdcdec3f456f0e0b2d45395 "githalytics.com")](http://githalytics.com/oo12/setPlaceholders)
