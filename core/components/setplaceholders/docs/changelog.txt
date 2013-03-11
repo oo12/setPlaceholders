@@ -1,5 +1,17 @@
 Changelog for setPlaceholders
 
+setPlaceholders 1.2.0-pl
+------------------------
+* Adds support for child resources. Ex: child4.pagetitle (4th child) or
+  child-1.pagetitle (last child)
+
+* Adds special processing for MIGX TVs (arrays of JSON objects).
+  For example, parent.migx.someMIGXtv will set a placeholder for each
+  key/value pair in the TV.
+
+* Minor performance improvements
+
+
 setPlaceholders 1.1.0-pl
 ------------------------
 * Add &ph property with a more powerful syntax.  It adds:
