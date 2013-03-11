@@ -1,4 +1,4 @@
-setPlaceholders 1.1
+setPlaceholders 1.2
 ===============
 
 A MODX Revolution snippet for getting fields and setting placeholders.  Download from the MODX [Extras Repository](http://modx.com/extras/package/setplaceholders).
@@ -73,7 +73,7 @@ Properties
 <tr><th>Property</th><th>Description</th><th>Default</th></tr>
 <tr>
   <td>&amp;id</td>
-  <td>[optional] &nbsp; The resource id to use. Can be overridden for individual items.</td>
+  <td>The resource id to use. Can be overridden for individual items.</td>
   <td>current resource</td>
 </tr><tr>
   <td>&amp;ph</td>
@@ -83,19 +83,27 @@ Properties
   <td></td>
 </tr><tr>
   <td>&amp;prefix</td>
-  <td>[optional] &nbsp; Prepended to any unspecified placeholder names, to reduce the likelihood of placeholder name conflicts. Not added to any user-specified placeholder names. Can be set to an empty string to eliminate the prefix.</td>
+  <td>Prepended to any unspecified placeholder names, to reduce the likelihood of placeholder name conflicts. Not added to any user-specified placeholder names. Can be set to an empty string to eliminate the prefix.</td>
   <td>sph.</td>
 </tr><tr>
-  <td>&amp;output</td><td>[optional] &nbsp; Output mode.<br><em>No</em> (0): only set placeholders<br><em>Yes</em> (1): also output the value of any placeholders. This allows the snippet to be used like getResourceField. Multiple values will be separated by <em>&amp;delimiter</em>.</td>
+  <td>&amp;output</td><td>Output mode.<br><em>No</em> (0): only set placeholders<br><em>Yes</em> (1): also output the value of any placeholders. This allows the snippet to be used like getResourceField. Multiple values will be separated by <em>&amp;delimiter</em>.</td>
   <td>No</td>
 </tr><tr>
   <td>&amp;delimiter</td>
-  <td>[optional] &nbsp; Separates values when results are returned as a string (i.e. &amp;output=`1`)</td>
+  <td>Separates values when results are returned as a string (i.e. &amp;output=`1`)</td>
   <td>,</td>
 </tr><tr>
   <td>&amp;placeholders</td>
-  <td>[optional] &nbsp; A list of user-defined placeholders to set<br>Format: name1 == value 1 || name2 == value 2<br>This property is a leftover from setPlaceholders 1.0.  Unlike in the <em>&amp;ph</em> property, values don't need to be quoted.</td>
+  <td>A list of user-defined placeholders to set<br>Format: name1 == value 1 || name2 == value 2<br>This property is a leftover from setPlaceholders 1.0.  Unlike in the <em>&amp;ph</em> property, values don't need to be quoted.</td>
   <td></td>
+</tr><tr>
+  <td>&amp;sortby</td>
+  <td>Sort by criterion. Used only when requesting child resources.</td>
+  <td>menuindex</td>
+</tr><tr>
+  <td>&amp;sortdir</td>
+  <td>Sort direction. Used only when requesting child resources.</td>
+  <td>ASC</td>
 </tr><tr><td>&amp;fields</td>
   <td>[deprecated] &nbsp; A list of fields to retrieve.<br>
   	Replaced by the <em>&amp;ph</em> property in v1.1 but remains for backwards compatibility</td>
@@ -114,11 +122,11 @@ A placeholder consists of 1&ndash;3 parts:
 
 1. _placeholder_name ==_ (optional). If specified, this will be the placeholder name.  If left off, the placeholder name will be formed from a prefix (_&amp;prefix_) + the field name.<br><strong>Examples</strong>: ```pid == parent.id``` – parent.id will be stored in [[+pid]]<br> ```parent.id``` – parent.id will be stored in [[+sph.parent.id]] since no specific placeholder name was given and _sph._ is the default prefix.
 
-2. A value or a fieldname.  Values are in quotes and are simply passed on without being evaluated further (though the quotes are trimmed off).  A value might be a bit of text or the output from another snippet.  Fieldnames are parsed and evaluated, and represent some bit of data you'd like retrieved.  They can have multiple prefixes.<br><strong>Examples</strong>: _Values_ – ```"A text message"```, ```"[[someSnippet]]"``` (MODX will evaluate someSnippet; setPlaceholders won't do anything further to the result)<br>_Fieldnames_ – ```pagetitle```, ```13.Uparent2.tv.someTV```
+2. A value or a fieldname.  Values are in quotes and are simply passed on without being evaluated further (though the quotes are trimmed off).  A value might be a bit of text or the output from another snippet.  Fieldnames are parsed and evaluated, and represent some bit of data you'd like retrieved.  They can have multiple selector prefixes.<br><strong>Examples</strong>: _Values_ – ```"A text message"```, ```"[[someSnippet]]"``` (MODX will evaluate someSnippet; setPlaceholders won't do anything further to the result)<br>_Fieldnames_ – ```pagetitle```, ```13.Uparent2.tv.someTV```
 
 3. _!! default_ (optional).  If the fieldname wasn't found or was empty, the default will be used.  Defaults may be values or fieldnames.
 
-<strong>Fieldname prefixes</strong>
+<strong>Fieldname selector prefixes</strong>
 
 * <strong>_resource_id_.</strong> – If specified, get a field from this resource ID. Otherwise use the value of _&amp;id_ (by default the current resource).<br>_Example_: ```12.pagetitle``` – get the pagetitle of resource 12.
 
@@ -126,7 +134,11 @@ A placeholder consists of 1&ndash;3 parts:
 
 * <strong>Uparent<em>[level]</em>.</strong> – get a field from the resource's ultimate parent. (<strong>Uparent.</strong> and <strong>parent.</strong> are essentially mirror images of one another.) Use the optional level number to move further down the tree. If you specify more levels than exist in your document tree, setPlaceholders will simply stop at the resource's immediate parent. <br>_Examples_: ```Uparent.id``` – the resource's top-most parent's id<br>```Uparent2.id``` – the resource's 2nd top-most parent's id<br>```Uparent99.id``` – the resource's parent's id
 
-* <strong>tv.</strong> – get a TV
+* <strong>child<em>[child #]</em>.</strong> – get a field from one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. Out-of-range child numbers will stop either at the last child or the first child. <br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-2.id``` – id of the resource's second-to-last child
+
+* <strong>tv.</strong> – get a TV. (setPlaceholders returns processed TV values)
+
+* <strong>migx<em>[object limit]</em>.</strong> – special processing for MIGX TVs (or for other arrays of JSON objects).  If you use this selector, setPlaceholders will loop through the array and create placeholders for each key/value pair (it skips MIGX\_id), plus a total. The placeholder names are in the format _[main placeholder name].[key][item #]_. Adding an optional number after _migx_ limits the results to the first _N_ objects in the TV.<br>_Example_: The parent resource has a MIGX TV called imagestv with two fields: title and image.  The resource has three items stored in this tv. ```photos == parent.migx.imagestv``` will set 7 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` ```[[+photos.title2]]``` ```[[+photos.image2]]``` ```[[+photos.title3]]``` ```[[+photos.image3]]``` and ```[[+photos.total]]``` (the number of items processed: 3)<br>```photos == parent.migx1.imagestv``` will set 3 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` and ```[[+photos.total]]``` (1).
 
 * <strong>get.</strong> – a variable from $_GET<br>_Example_: ```get.page``` – the value of $_GET['page']
 
@@ -134,6 +146,6 @@ A placeholder consists of 1&ndash;3 parts:
 
 Prefixes may be chained where it makes sense.  For instance: ```parent.pagetitle``` or ```42.parent3.tv.someTV```.
 
-setPlaceholders caches the results of some MODX API calls it makes, so getting multiple fields from the same resource or from various parents of the same resource is quite efficient if you put them all in the same setPlaceholders call.
+setPlaceholders caches the results of some MODX API calls it makes, so getting multiple fields from the same resource or from various parents or children of the same resource is quite efficient, even if the calls occur in different places in the template.
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/34a8457ccfdcdec3f456f0e0b2d45395 "githalytics.com")](http://githalytics.com/oo12/setPlaceholders)
