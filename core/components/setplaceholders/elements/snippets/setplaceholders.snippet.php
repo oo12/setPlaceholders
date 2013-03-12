@@ -18,7 +18,7 @@
  *
  * @package setPlaceholders
  * @author Jason Grant
- * @version 1.2.0-pl
+ * @version 1.2.1-pl
  */
 
 /**
@@ -125,7 +125,7 @@ function sph_getVal($fieldName, $id) {
 				$level = -1 + (int) $r_index;
 				$fieldNameOffset += strlen($r_index);
 			}
-			$cacheKey = $id . 'c';
+			$cacheKey = $id . $GLOBALS['sortby'][0] . $GLOBALS['sortdir'][0];
 			if ( !isset($sph_cache[$cacheKey]) ) {
 				$cids = array();
 				$c = $modx->newQuery( 'modResource', array('published' => 1, 'deleted' => 0, 'parent' => $id) );
