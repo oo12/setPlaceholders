@@ -76,7 +76,7 @@ function sph_getVal($fieldName, $id) {
 	elseif ( $fieldPrefixes[0] === 'post' ) { return( $_POST[substr($fieldName, 5)] ); }
 	else {
 		global $modx;
-		static $sph_cache = array(); // cache for resources and parent IDs
+		static $sph_cache = array(), $sph_resource_cache = array();  // set up caches for parent/child ids and the resources themselves
 		$idx = 0;
 		$fieldNameOffset = 0;
 		if ( is_numeric($fieldPrefixes[0]) ) {  // check for a resource ID
@@ -150,8 +150,8 @@ function sph_getVal($fieldName, $id) {
 			++$idx;
 		}
 		$cacheKey = $id . 'id';
-		if ( !isset($sph_cache[$cacheKey]) ) { $sph_cache[$cacheKey] = $modx->getObject('modResource', $id); }
-		if ( $doc = $sph_cache[$cacheKey] ) {  // if we've got a valid resource
+		if ( !isset($sph_resource_cache[$cacheKey]) ) { $sph_resource_cache[$cacheKey] = $modx->getObject('modResource', $id); }
+		if ( $doc = $sph_resource_cache[$cacheKey] ) {  // if we've got a valid resource
 			if ( $fieldPrefixes[$idx] === 'tv' ) { return $doc->getTVValue( substr($fieldName, $fieldNameOffset + 3) ); }
 			elseif ( substr($fieldPrefixes[$idx], 0, 4) === 'migx' ) {  // get a migx TV (array of JSON objects)
 				$migx_rows = substr($fieldPrefixes[$idx], 4);  // check for an object limit
@@ -198,6 +198,8 @@ foreach ($ph as $field) {
 		else { $p[$varname] = $value; }  // key: user-defined nam OR prefix + field name
 	}
 }
+// try killing the resource cache now to prevent "Argument 1 passed to xPDOObject::load() must be an instance of xPDO..." warning?
+unset($sph_resource_cache);
 
 /* Code for deprecated property &fields. Retained for backwards compatibility. */
 if ($fields)  {
@@ -235,6 +237,5 @@ foreach ($placeholders as $placeholder) { // add any user-defined placeholders
 
 // Output our results
 $modx->setPlaceholders($p);
-$output = $output ? implode($delimiter, $p) : '';
 
-return $output;
+return $output ? implode($delimiter, $p) : '';
