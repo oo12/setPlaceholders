@@ -127,15 +127,14 @@ function sph_getVal($fieldName, $id) {
 			}
 			$cacheKey = $id . $GLOBALS['sortby'][0] . $GLOBALS['sortdir'][0];
 			if ( !isset($sph_cache[$cacheKey]) ) {
-				$cids = array();
-				$c = $modx->newQuery( 'modResource', array('published' => 1, 'deleted' => 0, 'parent' => $id) );
-				$c->sortby($GLOBALS['sortby'], $GLOBALS['sortdir']);
-				$children = $modx->getCollection('modResource', $c);
-				if (empty($children)) { return 0; }
-				else {
-					foreach ($children as $child) { $cids[] = $child->get('id'); }  // store each child id in our array
-					unset($children);
-				}
+				$q = $modx->newQuery('modResource');
+				$q->where(array('parent'=> $id, 'published' => 1, 'deleted' => 0));
+				$q->select('modResource.id');
+				$q->sortby($GLOBALS['sortby'], $GLOBALS['sortdir']);
+				$q->prepare();
+				$q->stmt->execute();
+				$cids = $q->stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+				if (empty($cids)) { return 0; }
 				$sph_cache[$cacheKey] = $cids;  // cache the array
 				$sph_cache[$cacheKey . 'c'] = count($cids) - 1;  // and its count
 			}
