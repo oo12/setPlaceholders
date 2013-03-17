@@ -125,7 +125,7 @@ function sph_getVal($fieldName, $id) {
 				$level = -1 + (int) $r_index;
 				$fieldNameOffset += strlen($r_index);
 			}
-			$cacheKey = $id . $GLOBALS['sortby'][0] . $GLOBALS['sortdir'][0];
+			$cacheKey = $id . $GLOBALS['sortby'] . $GLOBALS['sortdir'][0];
 			if ( !isset($sph_cache[$cacheKey]) ) {
 				$q = $modx->newQuery('modResource');
 				$q->where(array('parent'=> $id, 'published' => 1, 'deleted' => 0));
