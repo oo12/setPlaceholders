@@ -1,5 +1,10 @@
 Changelog for setPlaceholders
 
+setPlaceholders 1.2.1-pl
+------------------------
+* Performance tweaks, especially for the child selector
+
+
 setPlaceholders 1.2.0-pl
 ------------------------
 * Adds support for child resources. Ex: child4.pagetitle (4th child) or
