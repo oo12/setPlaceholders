@@ -133,12 +133,11 @@ function sph_getVal($fieldName, $id) {
 				$q->sortby($GLOBALS['sortby'], $GLOBALS['sortdir']);
 				$q->prepare();
 				$q->stmt->execute();
-				$cids = $q->stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-				if (empty($cids)) { return 0; }
-				$sph_cache[$cacheKey] = $cids;  // cache the array
-				$sph_cache[$cacheKey . 'c'] = count($cids) - 1;  // and its count
+				$sph_cache[$cacheKey] = $q->stmt->fetchAll(PDO::FETCH_COLUMN, 0);  // cache the child IDs array
+				$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]) - 1;  // and its count
 			}
 			$cidsCount = $sph_cache[$cacheKey . 'c'];
+			if ($cidsCount < 0) { return FALSE; }  // return if we don't have any children
 			if ($level > $cidsCount) { $level = $cidsCount; }  // don't go past the last child
 			elseif ($level < 0) {  // or the first
 				$cidsCount += 2;
@@ -176,8 +175,8 @@ foreach ($ph as $field) {
 	}
 	$fieldName = $field[0] = trim( $field[0] );
 	$value = sph_getVal($fieldName, $id);
-	if ( $value == '' && isset($field[1]) ) { $value = sph_getVal( trim($field[1]), $id ); }  // if we didn't find a value, use the default
-	if ($value != '') {
+	if ( empty($value) && isset($field[1]) ) { $value = sph_getVal( trim($field[1]), $id ); }  // if we didn't find a value, use the default
+	if ( !empty($value) || is_numeric($value) ) {  // If we've got a value (even "0") then set a placeholder
 		$varname = $varname ? $varname : $prefix . $field[0];
 		if (is_array($value)) {  // special processing for migx
 			$varname .= '.';
@@ -234,6 +233,4 @@ foreach ($placeholders as $placeholder) { // add any user-defined placeholders
 
 // Output our results
 $modx->setPlaceholders($p);
-$output = $output ? implode($delimiter, $p) : '';
-
-return $output;
+return $output ? implode($delimiter, $p) : '';
