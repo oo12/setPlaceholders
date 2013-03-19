@@ -59,14 +59,13 @@ $ph = $ph ? explode('||', $ph) : array();
 $prefix = isset($prefix) ? $prefix : 'sph.';
 $delimiter = isset($delimiter) ? $delimiter : ',';
 $placeholders = $placeholders ? explode('||', $placeholders) : array();
-global $sortby, $sortdir;
 $sortby = $sortby ? $sortby : 'menuindex';
 $sortdir = $sortdir ? $sortdir : 'ASC';
 /* Deprecated as of v1.1 */
 $fields = isset($fields) ? explode(',', $fields) : array();
 
 if ( !function_exists('sph_getVal') ) {
-function sph_getVal($fieldName, $id) {
+function sph_getVal($fieldName, $id, $sort_by, $sort_dir) {
 	if ($fieldName[0] === '"') {  // check for a quoted value and skip parsing if found
 		if ( substr($fieldName, -1) === '"' ) { return( substr($fieldName, 1, -1) ); }  // remove a trailing " if present
 		else { return( $field[0] = substr($fieldName, 1) ); }
@@ -125,19 +124,19 @@ function sph_getVal($fieldName, $id) {
 				$level = -1 + (int) $r_index;
 				$fieldNameOffset += strlen($r_index);
 			}
-			$cacheKey = $id . $GLOBALS['sortby'] . $GLOBALS['sortdir'][0];
+			$cacheKey = $id . $sort_by . $sort_dir[0];
 			if ( !isset($sph_cache[$cacheKey]) ) {
 				$q = $modx->newQuery('modResource');
 				$q->where(array('parent'=> $id, 'published' => 1, 'deleted' => 0));
 				$q->select('modResource.id');
-				$q->sortby($GLOBALS['sortby'], $GLOBALS['sortdir']);
+				$q->sortby($sort_by, $sort_dir);
 				$q->prepare();
 				$q->stmt->execute();
 				$sph_cache[$cacheKey] = $q->stmt->fetchAll(PDO::FETCH_COLUMN, 0);  // cache the child IDs array
 				$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]) - 1;  // and its count
 			}
 			$cidsCount = $sph_cache[$cacheKey . 'c'];
-			if ($cidsCount < 0) { return FALSE; }  // return if we don't have any children
+			if ($cidsCount < 0) { return NULL; }  // return if we don't have any children
 			if ($level > $cidsCount) { $level = $cidsCount; }  // don't go past the last child
 			elseif ($level < 0) {  // or the first
 				$cidsCount += 2;
@@ -147,7 +146,7 @@ function sph_getVal($fieldName, $id) {
 			$fieldNameOffset += 6;
 			++$idx;
 		}
-		$cacheKey = $id . 'id';
+		$cacheKey = $id . 'i';
 		if ( !isset($sph_cache[$cacheKey]) ) { $sph_cache[$cacheKey] = $modx->getObject('modResource', $id); }
 		if ( $doc = $sph_cache[$cacheKey] ) {  // if we've got a valid resource
 			if ( $fieldPrefixes[$idx] === 'tv' ) { return $doc->getTVValue( substr($fieldName, $fieldNameOffset + 3) ); }
@@ -155,7 +154,7 @@ function sph_getVal($fieldName, $id) {
 				$migx_rows = substr($fieldPrefixes[$idx], 4);  // check for an object limit
 				$migx_rows &&   $fieldNameOffset += strlen($migx_rows);
 				$migx = json_decode($doc->getTVValue( substr($fieldName, $fieldNameOffset + 5) ), TRUE);
-				$migx_rows &&   $migx = array_slice($migx, 0, (int) $migx_rows);
+				$migx_rows && $migx &&   $migx = array_slice($migx, 0, (int) $migx_rows);
 				return $migx;
 			}
 			else { return $doc->get( substr($fieldName, $fieldNameOffset) ); }  // assume it's a field name
@@ -174,27 +173,27 @@ foreach ($ph as $field) {
 		$varname = trim( $varname[0] );
 	}
 	$fieldName = $field[0] = trim( $field[0] );
-	$value = sph_getVal($fieldName, $id);
-	if ( empty($value) && isset($field[1]) ) { $value = sph_getVal( trim($field[1]), $id ); }  // if we didn't find a value, use the default
-	if ( !empty($value) || is_numeric($value) ) {  // If we've got a value (even "0") then set a placeholder
-		$varname = $varname ? $varname : $prefix . $field[0];
-		if (is_array($value)) {  // special processing for migx
-			$varname .= '.';
-			$migx_idx = 1;
-			foreach ($value as $migx_row) {
-				if (is_array($migx_row)) {
-					$migx_notfirst = FALSE;
-					foreach ($migx_row as $k=>$v) {  // set key:value pairs but ignore MIGX_id
-						if ($migx_notfirst || $k !== 'MIGX_id') { $p[$varname . $k . $migx_idx] = $v;}
-						$migx_notfirst = TRUE;
-					}
-					++$migx_idx;
-				}
-			}
-			$p[$varname . 'total'] = $migx_idx - 1;  // set a placeholder with the total # of objects processed
-		}
-		else { $p[$varname] = $value; }  // key: user-defined nam OR prefix + field name
+	$value = sph_getVal($fieldName, $id, $sortby, $sortdir);
+	if ( empty($value) && isset($field[1]) ) {  // if we didn't find a value, use the default
+		$value = sph_getVal(trim($field[1]), $id, $sortby, $sortdir);
 	}
+	$varname = $varname ? $varname : $prefix . $field[0]; // key: user-defined name OR prefix + field name
+	if (is_array($value)) {  // special processing for migx
+		$varname .= '.';
+		$migx_idx = 1;
+		foreach ($value as $migx_row) {
+			if (is_array($migx_row)) {
+				$migx_notfirst = FALSE;
+				foreach ($migx_row as $k=>$v) {  // set key:value pairs but ignore MIGX_id
+					if ($migx_notfirst || $k !== 'MIGX_id') { $p[$varname . $k . $migx_idx] = $v;}
+					$migx_notfirst = TRUE;
+				}
+				++$migx_idx;
+			}
+		}
+		$p[$varname . 'total'] = $migx_idx - 1;  // set a placeholder with the total # of objects processed
+	}
+	else { $p[$varname] = ($value === NULL) ? '' : $value; }  // set any not found items to '' so that placeholders will be fully parsed
 }
 
 /* Code for deprecated property &fields. Retained for backwards compatibility. */
