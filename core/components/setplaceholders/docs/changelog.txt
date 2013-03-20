@@ -2,7 +2,11 @@ Changelog for setPlaceholders
 
 setPlaceholders 1.2.1-pl
 ------------------------
-* Performance tweaks, especially for the child selector
+* Improves child selector performance
+* Changes behavior when a value isn't found for a placeholder: now the
+  placeholder will be set to an empty string so MODX will fully parse
+  and cache it.
+* A few other minor fixes and improvements
 
 
 setPlaceholders 1.2.0-pl
