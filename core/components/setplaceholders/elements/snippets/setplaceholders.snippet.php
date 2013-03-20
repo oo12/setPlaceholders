@@ -18,7 +18,7 @@
  *
  * @package setPlaceholders
  * @author Jason Grant
- * @version 1.2.1-pl
+ * @version 1.3.0-beta
  */
 
 /**
@@ -41,7 +41,6 @@
  * @property placeholders - (string)
  * @property sortby - (string)
  * @property sortdir - (string)
- * @property fields - (string)  Deprecated.
  *
  * See the default properties for a description of each.
  *
@@ -61,8 +60,6 @@ $delimiter = isset($delimiter) ? $delimiter : ',';
 $placeholders = $placeholders ? explode('||', $placeholders) : array();
 $sortby = $sortby ? $sortby : 'menuindex';
 $sortdir = $sortdir ? $sortdir : 'ASC';
-/* Deprecated as of v1.1 */
-$fields = isset($fields) ? explode(',', $fields) : array();
 
 if ( !function_exists('sph_getVal') ) {
 function sph_getVal($fieldName, $id, $sort_by, $sort_dir) {
@@ -195,35 +192,6 @@ foreach ($ph as $field) {
 	}
 	else { $p[$varname] = ($value === NULL) ? '' : $value; }  // set any not found items to '' so that placeholders will be fully parsed
 }
-
-/* Code for deprecated property &fields. Retained for backwards compatibility. */
-if ($fields)  {
-	$resource = $modx->getObject('modResource', $id);
-	$parents = array();
-	foreach ($fields as $field) {
-		$field = explode('!!', $field);
-		$fieldName = $field[0] = trim( $field[0] );
-		$fieldPrefixes = explode('.', $fieldName);
-		$doc = $resource;
-		$value = NULL;
-		if ($fieldPrefixes[0] === 'get')  { $value = $_GET[substr($fieldName, 4)];	}
-		elseif ($fieldPrefixes[0] === 'post')  { $value = $_POST[substr($fieldName, 5)]; }
-		else {
-			for ($idx = 0; $fieldPrefixes[$idx] === 'parent' && $doc; ++$idx) {
-				if (!isset($parents[$idx]))  { $parents[] = $modx->getObject('modResource', $doc->get('parent')); }
-				$doc = $parents[$idx];
-				$fieldName = substr($fieldName, 7);
-			}
-			if ($doc) {
-				if ($fieldPrefixes[$idx] === 'tv')  { $value = $doc->getTVValue( substr($fieldName, 3) ); }
-				else { $value = $doc->get($fieldName); }
-			}
-		}
-		if ($value == '' && isset($field[1]))  { $value = trim( $field[1] ); }
-		if ($value != '')  { $p[ $prefix . $field[0] ] = $value; }
-	}
-}
-/* End legacy code */
 
 foreach ($placeholders as $placeholder) { // add any user-defined placeholders
 	$ph = explode('==', $placeholder);

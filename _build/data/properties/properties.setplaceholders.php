@@ -18,15 +18,6 @@ $properties = array(
 		'lexicon' => 'setplaceholders:default'
 	),
 	array(
-		'name' => 'fields',
-		'desc' => 'prop_sph.fields_desc',
-		'type' => 'textfield',
-		'options' => '',
-		'value' => '',
-		'area' => 'Deprecated',
-		'lexicon' => 'setplaceholders:default'
-	),
-	array(
 		'name' => 'id',
 		'desc' => 'prop_sph.id_desc',
 		'type' => 'integer',

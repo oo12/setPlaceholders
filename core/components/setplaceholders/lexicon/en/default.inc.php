@@ -28,7 +28,6 @@
 
 //properties
 $_lang['prop_sph.delimiter_desc'] = 'Separates values when results are returned as a string (i.e. &amp;output=`1`)<br><strong>Default: ,</strong>';
-$_lang['prop_sph.fields_desc'] = 'Deprecated.<br>A comma-separated list of fields to retrieve. Use the &amp;ph property instead.';
 $_lang['prop_sph.id_desc'] = 'The resource id to use<br><strong>Default:</strong> current resource';
 $_lang['prop_sph.output_desc'] = '<strong>No</strong> [default]: only set placeholders<br><strong>Yes</strong>: also output the value of any placeholders. Multiple values will be separated by &amp;delimiter.';
 $_lang['prop_sph.placeholders_desc'] = 'Prepended to any unspecified placeholder names, to reduce the likelihood of placeholder name conflicts. Not added to any user-specified placeholder names. Can be set to an empty string to eliminate the prefix.';
