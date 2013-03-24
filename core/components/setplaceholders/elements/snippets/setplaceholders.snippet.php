@@ -62,6 +62,17 @@ $sortby = $sortby ? $sortby : 'menuindex';
 $sortdir = $sortdir ? $sortdir : 'ASC';
 
 if ( !function_exists('sph_getVal') ) {
+function sph_getChildren($id, $sort_by, $sort_dir) {
+	global $modx;
+	$q = $modx->newQuery('modResource');
+	$q->where(array('parent'=> $id, 'published' => 1, 'deleted' => 0));
+	$q->select('modResource.id');
+	$q->sortby($sort_by, $sort_dir);
+	$q->prepare();
+	$q->stmt->execute();
+	return $q->stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+}
+
 function sph_getVal($fieldName, $id, $sort_by, $sort_dir) {
 	if ($fieldName[0] === '"') {  // check for a quoted value and skip parsing if found
 		if ( substr($fieldName, -1) === '"' ) { return( substr($fieldName, 1, -1) ); }  // remove a trailing " if present
@@ -88,11 +99,8 @@ function sph_getVal($fieldName, $id, $sort_by, $sort_dir) {
 				$fieldNameOffset += strlen($r_index);
 			}
 			$cacheKey = $id . 'p';
-			if ( !isset($sph_cache[$cacheKey]) ) {
-				$sph_cache[$cacheKey] = $modx->getParentIds($id);
-				$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]);
-			}
-			$tmp = $sph_cache[$cacheKey . 'c'] - $level;
+			if ( !isset($sph_cache[$cacheKey]) )  { $sph_cache[$cacheKey] = $modx->getParentIds($id); }
+			$tmp = count($sph_cache[$cacheKey]) - $level;
 			$id = $sph_cache[$cacheKey][ $tmp > 0 ? $tmp : 0 ];  // don't go past the immediate parent
 			$fieldNameOffset += 8;
 			++$idx;
@@ -105,13 +113,43 @@ function sph_getVal($fieldName, $id, $sort_by, $sort_dir) {
 				$fieldNameOffset += strlen($r_index);
 			}
 			$cacheKey = $id . 'p';
-			if ( !isset($sph_cache[$cacheKey]) ) {
-				$sph_cache[$cacheKey] = $modx->getParentIds($id);
-				$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]);
-			}
-			$tmp = $sph_cache[$cacheKey . 'c'] - 2;
+			if ( !isset($sph_cache[$cacheKey]) )  { $sph_cache[$cacheKey] = $modx->getParentIds($id); }
+			$tmp = count($sph_cache[$cacheKey]) - 2;
 			$id = $sph_cache[$cacheKey][ $level < $tmp ? $level : $tmp ];  // don't go past top-most parent
 			$fieldNameOffset += 7;
+			++$idx;
+		}
+		$tmp = substr($fieldPrefixes[$idx], 0, 4);
+		if ($tmp === 'prev' || $tmp === 'next' || $tmp === 'inde') {
+			$cacheKey = $id . 'p';
+			if ( !isset($sph_cache[$cacheKey]) ) {
+				$sph_cache[$cacheKey] = $modx->getParentIds($id);
+				if (!$sph_cache[$cacheKey])  { return; }
+			}
+			$tmp_id = $sph_cache[$cacheKey][0];
+			$cacheKey = $tmp_id . $sort_by . $sort_dir[0];
+			if ( !isset($sph_cache[$cacheKey]) )  {
+				$sph_cache[$cacheKey] = sph_getChildren($tmp_id, $sort_by, $sort_dir);
+			}
+			$pos = array_search($id, $sph_cache[$cacheKey]);
+			if ( $pos === FALSE )  { return; }
+			if ( $tmp === 'inde')  { return $pos + 1; }
+			$r_index = substr($fieldPrefixes[$idx], 4);
+			if ( $r_index ) {  // ready any child index
+				$fieldNameOffset += strlen($r_index);
+				$r_index = (int) $r_index;
+			}
+			else { $r_index = 1; }
+			if ($tmp === 'prev') {
+				$pos -= $r_index;
+				if ($pos < 0)  { return; }
+			}
+			else {
+				$pos += $r_index;
+				if ( $pos + 1 > count($sph_cache[$cacheKey]) )  { return; }
+			}
+			$id = $sph_cache[$cacheKey][$pos];
+			$fieldNameOffset += 5;
 			++$idx;
 		}
 		if ( substr($fieldPrefixes[$idx], 0, 5) === 'child' ) {  // child resource
@@ -123,23 +161,16 @@ function sph_getVal($fieldName, $id, $sort_by, $sort_dir) {
 			}
 			$cacheKey = $id . $sort_by . $sort_dir[0];
 			if ( !isset($sph_cache[$cacheKey]) ) {
-				$q = $modx->newQuery('modResource');
-				$q->where(array('parent'=> $id, 'published' => 1, 'deleted' => 0));
-				$q->select('modResource.id');
-				$q->sortby($sort_by, $sort_dir);
-				$q->prepare();
-				$q->stmt->execute();
-				$sph_cache[$cacheKey] = $q->stmt->fetchAll(PDO::FETCH_COLUMN, 0);  // cache the child IDs array
-				$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]) - 1;  // and its count
+				$sph_cache[$cacheKey] = sph_getChildren($id, $sort_by, $sort_dir);
 			}
-			$cidsCount = $sph_cache[$cacheKey . 'c'];
-			if ($cidsCount < 0) { return NULL; }  // return if we don't have any children
+			$cidsCount = count($sph_cache[$cacheKey]) - 1;
+			if ($cidsCount < 0) { return; }  // return if we don't have any children
 			if ($level > $cidsCount) { $level = $cidsCount; }  // don't go past the last child
 			elseif ($level < 0) {  // or the first
 				$cidsCount += 2;
 				$level = (-$level > $cidsCount) ? 0 : $level + $cidsCount;
 			}
-			$id = $sph_cache[$cacheKey][ $level ];
+			$id = $sph_cache[$cacheKey][$level];
 			$fieldNameOffset += 6;
 			++$idx;
 		}
