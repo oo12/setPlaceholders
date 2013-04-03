@@ -1,4 +1,4 @@
-setPlaceholders 1.2.1
+setPlaceholders 2.0
 ===============
 
 A MODX Revolution snippet for getting fields and setting placeholders.  Download from the MODX [Extras Repository](http://modx.com/extras/package/setplaceholders).
@@ -31,10 +31,6 @@ Sets the placeholders:<br>
 ```[[+section]]``` the value of a TV named section for the current resource's ultimate parent<br>
 ```[[+sph.parent.tv.columns]]``` the value of the columns TV for the resource's parent, or if it's not found, for the same TV on the resource's grandparent<br>
 ```[[+color]]``` #a35c0a
-
-* As an output filter:<br>
-<pre>[[*someTV:eq=`foo`:then=`bar`:else=`nobar`:setPlaceholders=`fb`]] </pre>
-Returns the value of the expression and also stores it in [[+fb]] for later use on the page.
 
 * As a getResourceField replacement:<br>
 <pre>[[setPlaceholders? &ph=`Uparent2.tv.someTV !! "No such TV"` &output=`1`]]</pre><br>
@@ -132,9 +128,9 @@ A placeholder consists of 1&ndash;3 parts:
 
 * <strong>parent<em>[level]</em>.</strong> – get a field from the resource's parent. Use the optional level number to move further up the tree.  If you specify more levels than exist in your document tree, setPlaceholders will simply stop at the resource's top-most parent (i.e. the ultimate parent)<br>_Examples_: ```parent.id``` – the resource's parent's id<br>```parent2.id``` – the resource's grandparent's id<br>```parent99.id``` – the resource's "ultimate parent's" id
 
-* <strong>Uparent<em>[level]</em>.</strong> – get a field from the resource's ultimate parent. (<strong>Uparent.</strong> and <strong>parent.</strong> are essentially mirror images of one another.) Use the optional level number to move further down the tree. If you specify more levels than exist in your document tree, setPlaceholders will simply stop at the resource's immediate parent. <br>_Examples_: ```Uparent.id``` – the resource's top-most parent's id<br>```Uparent2.id``` – the resource's 2nd top-most parent's id<br>```Uparent99.id``` – the resource's parent's id
+* <strong>Uparent<em>[level]</em>.</strong> – get a field from the resource's ultimate parent. (<strong>Uparent.</strong> and <strong>parent.</strong> are essentially mirror images of one another.) Use the optional level number to move further down the tree. <br>_Examples_: ```Uparent.id``` – the resource's top-most parent's id<br>```Uparent2.id``` – the resource's 2nd top-most parent's id<br>```Uparent99.id``` – the resource's parent's id
 
-* <strong>child<em>[child #]</em>.</strong> – get a field from one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. Out-of-range child numbers will stop either at the last child or the first child. <br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-2.id``` – id of the resource's second-to-last child
+* <strong>child<em>[child #]</em>.</strong> – get a field from one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. <br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-2.id``` – id of the resource's second-to-last child
 
 * <strong>tv.</strong> – get a TV. (setPlaceholders returns processed TV values)
 
