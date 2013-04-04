@@ -138,21 +138,34 @@ function getVal($fieldName) {
 		$r_index = substr($fieldPrefixes[$idx], 4);
 		if ( $r_index ) {  // ready any next/prev offset
 			$fieldNameOffset += strlen($r_index);
-			$r_index = (int) $r_index;
+			if ($r_index !== 'M') {  // if it's not a "max" sibling
+				$r_index = (int) $r_index;
+			}
 		}
 		else {
 			$r_index = 1;
 		}
 		if ($tmp === 'prev') {
-			$pos -= $r_index;
-			if ($pos < 0) {  // if we've gone out of bounds, return nothing
-				return;
+			if ($r_index === 'M') {  // first sibling
+				$pos = 0;
+			}
+			else {
+				$pos -= $r_index;
+				if ($pos < 0) {  // if we've gone out of bounds, return nothing
+					return;
+				}
 			}
 		}
 		else {  // next
-			$pos += $r_index;
-			if ( $pos + 1 > count($sph_cache[$cacheKey]) ) {
-				return;
+			$tmp = count($sph_cache[$cacheKey]) - 1;
+			if ($r_index === 'M') {  // last sibling
+				$pos = $tmp;
+			}
+			else {
+				$pos += $r_index;
+				if ( $pos > $tmp ) {  // if we've gone out of bounds, return nothing
+					return;
+				}
 			}
 		}
 		$id = $sph_cache[$cacheKey][$pos];
