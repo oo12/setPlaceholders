@@ -227,8 +227,9 @@ function getVal($fieldName) {
 	}
 
 
-/*  Special processing for MIGX TVs (arrays of JSON objects)  */
-	if (strncmp('migx', $fieldPrefixes[$idx], 4) === 0) {
+/*  Special processing for MIGX/JSON TVs (arrays of JSON objects)  */
+	$tmp = substr($fieldPrefixes[$idx], 0, 4);
+	if ($tmp === 'migx' || $tmp === 'json') {
 		$migx_rows = substr($fieldPrefixes[$idx], 4);  // check for an object limit
 		if ($migx_rows)  {
 			$fieldNameOffset += strlen($migx_rows);
