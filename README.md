@@ -21,16 +21,17 @@ Examples
 &nbsp; &nbsp; &nbsp; parent.tv.columns !! parent2.tv.columns ||
 &nbsp; &nbsp; &nbsp; color == "#a35c0a"\`
 ]]
-</pre><br>
+</pre>
 Sets the placeholders:<br>
 ```[[+sph.parent.pagetitle]]``` the current resource's parent's pagetitle<br>
 ```[[+sph.13.introtext]]``` resource 13's introtext, or _No Summary Available_ if not found<br>
 ```[[+section]]``` the value of a TV named section for the current resource's ultimate parent<br>
 ```[[+sph.parent.tv.columns]]``` the value of the columns TV for the resource's parent, or if it's not found, for the same TV on the resource's grandparent<br>
 ```[[+color]]``` #a35c0a
+<br>
 
 * As a getResourceField replacement:<br>
-<pre>[[setPlaceholders? &ph=`Uparent2.tv.someTV !! "No such TV"` &output=`1`]]</pre><br>
+<pre>[[setPlaceholders? &ph=`Uparent2.tv.someTV !! "No such TV"` &output=`1`]]</pre>
 Returns the value of someTV for the second-highest parent of the current resource, or &ldquo;No such TV&rdquo; if that TV is empty or not found.  It also puts this value in ```[[+sph.Uparent2.tv.someTV]]```<br>
 This is the equivalent of:<br>
 <pre>[[getResourceField? &id=`[[UltimateParent? &topLevel=`2`]]`
@@ -46,9 +47,8 @@ Sets the placeholders:<br>
 
 * Simple next / previous, first / last navigation:
 <pre>[[setPlaceholders?
-&nbsp; &ph=`next == next.id || prev == prev.id || first == prevM.id || last == nextM.id`
+&nbsp; &ph=\`next == next.id || prev == prev.id || first == prevM.id || last == nextM.id\`
 ]]
-
 &lt;a href="[[~[[+first]]]]"&gt;First&lt;a&gt;
 [[+prev:!empty=`&lt;a href="[[~[[+prev]]]]"&gt;Previous&lt;a&gt;`]]
 [[+next:!empty=`&lt;a href="[[~[[+next]]]]"&gt;Next&lt;a&gt;`]]
@@ -158,6 +158,8 @@ Items ending with a ▣ return a value; those ending with a . require a further 
 * <strong>migx<em>[object limit]</em>.<em>{MIGX TV name}</em></strong> ▣ – special processing for MIGX TVs (or for other arrays of JSON objects).  If you use this selector, setPlaceholders will loop through the array and create placeholders for each key/value pair (it skips MIGX\_id), plus a total. The placeholder names are in the format _[main placeholder name].[key][item #]_. Adding an optional number after _migx_ limits the results to the first _N_ objects in the TV.<br>_Example_: The parent resource has a MIGX TV called imagestv with two fields: title and image.  The resource has three items stored in this tv. ```photos == parent.migx.imagestv``` will set 7 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` ```[[+photos.title2]]``` ```[[+photos.image2]]``` ```[[+photos.title3]]``` ```[[+photos.image3]]``` and ```[[+photos.total]]``` (the number of items processed: 3)<br>```photos == parent.migx1.imagestv``` will set 3 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` and ```[[+photos.total]]``` (1).
 
 * <strong>migxC.<em>{MIGX TV name}</em></strong> ▣ – returns a count of the items in a MIGX TV.
+
+* <strong>json<em>[object limit]</em>.<em>{JSON TV name}</em></strong> ▣ – an alias for <b>migx</b>.
 
 * <strong><em>field name</em></strong> ▣ — return the value of the specified field for the selected resource. Basically anything you could get with the [[* ]] tag.
 
