@@ -18,7 +18,7 @@
  *
  * @package setPlaceholders
  * @author Jason Grant
- * @version 1.2.1-pl
+ * @version 2.0.0-pl
  */
 
 /**
@@ -28,202 +28,82 @@
  * Variables
  * ---------
  * @var modX $modx
- * @var input $input
- * @var options $options
  *
  * Properties
  * ----------
- * @property id - (integer)
- * @property ph - (string)
- * @property prefix - (string)
- * @property output - (boolean)
- * @property delimiter - (string)
- * @property placeholders - (string)
- * @property sortby - (string)
- * @property sortdir - (string)
- * @property fields - (string)  Deprecated.
+ * @property integer id
+ * @property string  ph
+ * @property string  prefix
+ * @property boolean output
+ * @property string  delimiter
+ * @property string  placeholders
+ * @property string  sortby
+ * @property string  sortdir
+ * @property boolean processTVs
  *
  * See the default properties for a description of each.
  *
  * @package setPlaceholders
  **/
 
-if ( isset($input) && $options ) {  // if we're being used as an output filter
-	$modx->setPlaceholder($options, $input);
-	return $input;
-}
-
-// handle options
-$id = $id ? (int) $id : $modx->resource->get('id');
-$ph = $ph ? explode('||', $ph) : array();
-$prefix = isset($prefix) ? $prefix : 'sph.';
+// check and initialize essential properties
+$ph = empty($ph) ? array() : explode('||', $ph);
+$placeholders = empty($placeholders) ? array() : explode('||', $placeholders);
 $delimiter = isset($delimiter) ? $delimiter : ',';
-$placeholders = $placeholders ? explode('||', $placeholders) : array();
-$sortby = $sortby ? $sortby : 'menuindex';
-$sortdir = $sortdir ? $sortdir : 'ASC';
-/* Deprecated as of v1.1 */
-$fields = isset($fields) ? explode(',', $fields) : array();
-
-if ( !function_exists('sph_getVal') ) {
-function sph_getVal($fieldName, $id, $sort_by, $sort_dir) {
-	if ($fieldName[0] === '"') {  // check for a quoted value and skip parsing if found
-		if ( substr($fieldName, -1) === '"' ) { return( substr($fieldName, 1, -1) ); }  // remove a trailing " if present
-		else { return( $field[0] = substr($fieldName, 1) ); }
-	}
-	$fieldPrefixes = explode('.', $fieldName);
-	if ( $fieldPrefixes[0] === 'get' ) { return( $_GET[substr($fieldName, 4)] ); }
-	elseif ( $fieldPrefixes[0] === 'post' ) { return( $_POST[substr($fieldName, 5)] ); }
-	else {
-		global $modx;
-		static $sph_cache = array(); // cache for resources and parent IDs
-		$idx = 0;
-		$fieldNameOffset = 0;
-		if ( is_numeric($fieldPrefixes[0]) ) {  // check for a resource ID
-			$id = (int) $fieldPrefixes[0];
-			$fieldNameOffset += strlen($fieldPrefixes[0]) + 1;
-			$idx = 1;
-		}
-		if ( substr($fieldPrefixes[$idx], 0, 7) === 'Uparent' ) {  // Ultimate parent
-			$level = 2;
-			$r_index = substr($fieldPrefixes[$idx], 7);
-			if ( $r_index ) {  // read any Uparent index
-				$level = 1 + (int) $r_index;
-				$fieldNameOffset += strlen($r_index);
-			}
-			$cacheKey = $id . 'p';
-			if ( !isset($sph_cache[$cacheKey]) ) {
-				$sph_cache[$cacheKey] = $modx->getParentIds($id);
-				$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]);
-			}
-			$tmp = $sph_cache[$cacheKey . 'c'] - $level;
-			$id = $sph_cache[$cacheKey][ $tmp > 0 ? $tmp : 0 ];  // don't go past the immediate parent
-			$fieldNameOffset += 8;
-			++$idx;
-		}
-		if ( substr($fieldPrefixes[$idx], 0, 6) === 'parent' ) {  // regular parent
-			$level = 0;
-			$r_index = substr($fieldPrefixes[$idx], 6);
-			if ( $r_index ) {  // ready any parent index
-				$level = -1 + (int) $r_index;
-				$fieldNameOffset += strlen($r_index);
-			}
-			$cacheKey = $id . 'p';
-			if ( !isset($sph_cache[$cacheKey]) ) {
-				$sph_cache[$cacheKey] = $modx->getParentIds($id);
-				$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]);
-			}
-			$tmp = $sph_cache[$cacheKey . 'c'] - 2;
-			$id = $sph_cache[$cacheKey][ $level < $tmp ? $level : $tmp ];  // don't go past top-most parent
-			$fieldNameOffset += 7;
-			++$idx;
-		}
-		if ( substr($fieldPrefixes[$idx], 0, 5) === 'child' ) {  // child resource
-			$level = 0;
-			$r_index = substr($fieldPrefixes[$idx], 5);
-			if ( $r_index != 0 ) {  // ready any child index
-				$level = -1 + (int) $r_index;
-				$fieldNameOffset += strlen($r_index);
-			}
-			$cacheKey = $id . $sort_by . $sort_dir[0];
-			if ( !isset($sph_cache[$cacheKey]) ) {
-				$q = $modx->newQuery('modResource');
-				$q->where(array('parent'=> $id, 'published' => 1, 'deleted' => 0));
-				$q->select('modResource.id');
-				$q->sortby($sort_by, $sort_dir);
-				$q->prepare();
-				$q->stmt->execute();
-				$sph_cache[$cacheKey] = $q->stmt->fetchAll(PDO::FETCH_COLUMN, 0);  // cache the child IDs array
-				$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]) - 1;  // and its count
-			}
-			$cidsCount = $sph_cache[$cacheKey . 'c'];
-			if ($cidsCount < 0) { return NULL; }  // return if we don't have any children
-			if ($level > $cidsCount) { $level = $cidsCount; }  // don't go past the last child
-			elseif ($level < 0) {  // or the first
-				$cidsCount += 2;
-				$level = (-$level > $cidsCount) ? 0 : $level + $cidsCount;
-			}
-			$id = $sph_cache[$cacheKey][ $level ];
-			$fieldNameOffset += 6;
-			++$idx;
-		}
-		$cacheKey = $id . 'i';
-		if ( !isset($sph_cache[$cacheKey]) ) { $sph_cache[$cacheKey] = $modx->getObject('modResource', $id); }
-		if ( $doc = $sph_cache[$cacheKey] ) {  // if we've got a valid resource
-			if ( $fieldPrefixes[$idx] === 'tv' ) { return $doc->getTVValue( substr($fieldName, $fieldNameOffset + 3) ); }
-			elseif ( substr($fieldPrefixes[$idx], 0, 4) === 'migx' ) {  // get a migx TV (array of JSON objects)
-				$migx_rows = substr($fieldPrefixes[$idx], 4);  // check for an object limit
-				$migx_rows &&   $fieldNameOffset += strlen($migx_rows);
-				$migx = json_decode($doc->getTVValue( substr($fieldName, $fieldNameOffset + 5) ), TRUE);
-				$migx_rows && $migx &&   $migx = array_slice($migx, 0, (int) $migx_rows);
-				return $migx;
-			}
-			else { return $doc->get( substr($fieldName, $fieldNameOffset) ); }  // assume it's a field name
-		}
-	}
-}
-}
+$output = empty($output) ? FALSE : TRUE;
 
 $p = array();  // placeholder storage
-foreach ($ph as $field) {
-	$field = explode('!!', $field);  // separate out any default value
-	$varname = explode('==', $field[0]);  // separate out any user-defined placeholder name
-	if ( count($varname) === 1 ) { $varname = ''; }  // if there isn't one..
-	else {  // store the placeholder name
-		$field[0] = $varname[1];
-		$varname = trim( $varname[0] );
-	}
-	$fieldName = $field[0] = trim( $field[0] );
-	$value = sph_getVal($fieldName, $id, $sortby, $sortdir);
-	if ( empty($value) && isset($field[1]) ) {  // if we didn't find a value, use the default
-		$value = sph_getVal(trim($field[1]), $id, $sortby, $sortdir);
-	}
-	$varname = $varname ? $varname : $prefix . $field[0]; // key: user-defined name OR prefix + field name
-	if (is_array($value)) {  // special processing for migx
-		$varname .= '.';
-		$migx_idx = 1;
-		foreach ($value as $migx_row) {
-			if (is_array($migx_row)) {
-				$migx_notfirst = FALSE;
-				foreach ($migx_row as $k=>$v) {  // set key:value pairs but ignore MIGX_id
-					if ($migx_notfirst || $k !== 'MIGX_id') { $p[$varname . $k . $migx_idx] = $v;}
-					$migx_notfirst = TRUE;
-				}
-				++$migx_idx;
-			}
-		}
-		$p[$varname . 'total'] = $migx_idx - 1;  // set a placeholder with the total # of objects processed
-	}
-	else { $p[$varname] = ($value === NULL) ? '' : $value; }  // set any not found items to '' so that placeholders will be fully parsed
-}
+if ($ph) {
+	$id = empty($id) ? $modx->resource->get('id') : (int) $id;
+	$prefix = isset($prefix) ? $prefix : 'sph.';
+	$processTVs = empty($processTVs) ? FALSE : TRUE;
+	$sortby = empty($sortby) ? 'menuindex' : $sortby;
+	$sortdir = empty($sortdir) ? 'ASC' : $sortdir;
+	$staticCache = empty($staticCache) ? FALSE : TRUE;
 
-/* Code for deprecated property &fields. Retained for backwards compatibility. */
-if ($fields)  {
-	$resource = $modx->getObject('modResource', $id);
-	$parents = array();
-	foreach ($fields as $field) {
-		$field = explode('!!', $field);
-		$fieldName = $field[0] = trim( $field[0] );
-		$fieldPrefixes = explode('.', $fieldName);
-		$doc = $resource;
-		$value = NULL;
-		if ($fieldPrefixes[0] === 'get')  { $value = $_GET[substr($fieldName, 4)];	}
-		elseif ($fieldPrefixes[0] === 'post')  { $value = $_POST[substr($fieldName, 5)]; }
-		else {
-			for ($idx = 0; $fieldPrefixes[$idx] === 'parent' && $doc; ++$idx) {
-				if (!isset($parents[$idx]))  { $parents[] = $modx->getObject('modResource', $doc->get('parent')); }
-				$doc = $parents[$idx];
-				$fieldName = substr($fieldName, 7);
-			}
-			if ($doc) {
-				if ($fieldPrefixes[$idx] === 'tv')  { $value = $doc->getTVValue( substr($fieldName, 3) ); }
-				else { $value = $doc->get($fieldName); }
-			}
+	require_once MODX_CORE_PATH . 'components/setplaceholders/model/setplaceholders.class.php';
+	static $sph_r_cache = array();  // cache for resource and TV objects
+	$sph = new sph($modx, $sph_r_cache, $id, $sortby, $sortdir, $processTVs);
+
+	foreach ($ph as $field) {
+		$field = explode('!!', $field);  // separate out any default value
+		$varname = explode('==', $field[0]);  // separate out any user-defined placeholder name
+		if ( count($varname) === 1 ) {  // if there isn't one..
+			$varname = '';
 		}
-		if ($value == '' && isset($field[1]))  { $value = trim( $field[1] ); }
-		if ($value != '')  { $p[ $prefix . $field[0] ] = $value; }
+		else {  // store the placeholder name
+			$field[0] = $varname[1];
+			$varname = trim( $varname[0] );
+		}
+		$fieldName = $field[0] = trim( $field[0] );
+		$value = $sph->getVal($fieldName);
+		if ( empty($value) && isset($field[1]) ) {  // if we didn't find a value, use the default
+			$value = $sph->getVal(trim($field[1]));
+		}
+		$varname = $varname ? $varname : $prefix . $field[0]; // key: user-defined name OR prefix + field name
+		if (is_array($value)) {  // special processing for migx
+			$varname .= '.';
+			$migx_idx = 1;
+			foreach ($value as $migx_row) {
+				if (is_array($migx_row)) {
+					$migx_notfirst = FALSE;
+					foreach ($migx_row as $k=>$v) {  // set key:value pairs but ignore MIGX_id
+						if ($migx_notfirst || $k !== 'MIGX_id') {
+							$p[$varname . $k . $migx_idx] = $v;
+						}
+						$migx_notfirst = TRUE;
+					}
+					++$migx_idx;
+				}
+			}
+			$p[$varname . 'total'] = $migx_idx - 1;  // set a placeholder with the total # of objects processed
+		}
+		else {  // set any not found items to '' so that placeholders will be fully parsed
+			$p[$varname] = ($value === NULL) ? '' : $value;
+		}
 	}
+	if (!$staticCache)  { $sph_r_cache = array(); }
 }
-/* End legacy code */
 
 foreach ($placeholders as $placeholder) { // add any user-defined placeholders
 	$ph = explode('==', $placeholder);
