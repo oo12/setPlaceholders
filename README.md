@@ -3,23 +3,24 @@ setPlaceholders 2.0
 
 A MODX Revolution snippet for getting fields and setting placeholders. Download from the MODX [Extras Repository](http://modx.com/extras/package/setplaceholders).
 
-setPlaceholders combines the usefulness of placeholders—which are rather like local variables—with a fast and versatile engine for gathering up various data: fields and TVs from a resource or any of its ancestors, children or siblings.  It provides most of the functionality of getResourceField, UltimateParent, and getUrlParam all in one lightweight package.
+setPlaceholders combines the usefulness of placeholders—which are rather like local variables—with a fast and versatile engine for gathering up various data: fields and TVs from a resource or any of its ancestors, children or siblings, plus several other useful things.  It provides the functionality of getResourceField, UltimateParent, and getUrlParam—in addition to quite a bit more—all in one lightweight package.
 
+New and changed in this version
+-----------------------------
 
-Let's start with some examples.
+Please see the [changelog](https://github.com/oo12/setPlaceholders/blob/master/core/components/setplaceholders/docs/changelog.txt) for a summary.  There are a few changes which affect backwards compatibility with 1.x, so please look through it if you're upgrading.
 
 Examples
 --------
 
-
 * Showing the main functionality:<br>
 <pre>
 [[setPlaceholders?
-&nbsp;	&ph=\`parent.pagetitle ||
+&nbsp;	&ph=`parent.pagetitle ||
 &nbsp; &nbsp; &nbsp; 13.introtext !! "No Summary Available" ||
 &nbsp; &nbsp; &nbsp; section == Uparent.tv.section ||
 &nbsp; &nbsp; &nbsp; parent.tv.columns !! parent2.tv.columns ||
-&nbsp; &nbsp; &nbsp; color == "#a35c0a"\`
+&nbsp; &nbsp; &nbsp; color == "#a35c0a"`
 ]]
 </pre>
 Sets the placeholders:<br>
@@ -36,24 +37,23 @@ Returns the value of someTV for the second-highest parent of the current resourc
 This is the equivalent of:<br>
 <pre>[[getResourceField? &id=`[[UltimateParent? &topLevel=`2`]]`
 &nbsp; &field=`someTV` &isTV=`1` &default=`No such TV`]]</pre>
+
+* Simple next / previous, first / last navigation:
+<pre>[[setPlaceholders?
+&nbsp; &ph=`next == next.id || prev == prev.id || first == prevM.id || last == nextM.id`
+]]
 <br>
+&lt;a href="[[~[[+first]]]]"&gt;First&lt;a&gt;
+[[+prev:!empty=`&lt;a href="[[~[[+prev]]]]"&gt;Previous&lt;a&gt;`]]
+[[+next:!empty=`&lt;a href="[[~[[+next]]]]"&gt;Next&lt;a&gt;`]]
+&lt;a href="[[~[[+last]]]]"&gt;Last&lt;a&gt;
+</pre>
 
 * Getting some URL parameters:<br>
 <pre>[[!setPlaceholders? &ph=`get.type !! "1" || person == get.person`]]</pre>
 Sets the placeholders:<br>
 ```[[+sph.get.type]]``` $\_GET\['type'\] (or _1_ if there's no type given)<br>
 ```[[+person]]``` $\_GET\['person'\]
-<br>
-
-* Simple next / previous, first / last navigation:
-<pre>[[setPlaceholders?
-&nbsp; &ph=\`next == next.id || prev == prev.id || first == prevM.id || last == nextM.id\`
-]]
-&lt;a href="[[~[[+first]]]]"&gt;First&lt;a&gt;
-[[+prev:!empty=`&lt;a href="[[~[[+prev]]]]"&gt;Previous&lt;a&gt;`]]
-[[+next:!empty=`&lt;a href="[[~[[+next]]]]"&gt;Next&lt;a&gt;`]]
-&lt;a href="[[~[[+last]]]]"&gt;Last&lt;a&gt;
-</pre>
 <br>
 
 * One more example, with some other options:<br>
@@ -149,7 +149,7 @@ Items ending with a ▣ return a value; those ending with a . require a further 
 
 * <strong>child<em>[child #]</em>.</strong> – selects one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. <br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-1.id``` – id of the resource's last child<br>```child-2.id``` – id of the resource's second-to-last child
 
-* <strong>childR.</strong> – selects a random child.<br>_Example_: ```12.childR.id``` — returns the id number of a randomly select child of resource 12.
+* <strong>childR.</strong> – selects a random child. This selected child is cached, so you may reuse the selector with the same parent multiple times within a setPlaceholders call to get different values from the same random child. (Setting <em>&amp;staticCache</em> will leave it available for the next setPlacholders call as well.)<br>_Example_: ```12.childR.id || 12.childR.pagetitle``` — returns the id number and pagetitle of a randomly selected child of resource 12.
 
 * <strong>childC</strong> ▣ – returns a count of the resource's immediate children.
 
@@ -159,7 +159,7 @@ Items ending with a ▣ return a value; those ending with a . require a further 
 
 * <strong>migxC.<em>{MIGX TV name}</em></strong> ▣ – returns a count of the items in a MIGX TV.
 
-* <strong>json<em>[object limit]</em>.<em>{JSON TV name}</em></strong> ▣ – an alias for <b>migx</b>.
+* <strong>json<em>[object limit]</em>.<em>{JSON TV name}</em></strong> ▣ – an alias for <b>migx</b>. And <b>jsonC</b> is an alias for <b>migxC</b>.
 
 * <strong><em>field name</em></strong> ▣ — return the value of the specified field for the selected resource. Basically anything you could get with the [[* ]] tag.
 
