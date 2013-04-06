@@ -36,7 +36,7 @@ function getVal($fieldName) {
 		if ( substr($fieldName, -1) === '"' ) {  // remove a trailing " if present
 			return substr($fieldName, 1, -1);
 		}
-		return $field[0] = substr($fieldName, 1);
+		return substr($fieldName, 1);
 	}
 
 	$fieldPrefixes = explode('.', $fieldName);
@@ -98,7 +98,7 @@ function getVal($fieldName) {
 		if ( !isset($sph_cache[$cacheKey]) ) {
 			$sph_cache[$cacheKey] = $this->modx->getParentIds($id);
 		}
-		if ( $level > count($sph_cache[$cacheKey]) ) {  // return NULL if out of bounds
+		if ( $level >= count($sph_cache[$cacheKey]) ) {  // return NULL if out of bounds
 			return;
 		}
 		$id = $sph_cache[$cacheKey][$level - 1];
@@ -114,7 +114,7 @@ function getVal($fieldName) {
 		if ( !isset($sph_cache[$cacheKey]) ) {  // first get the parent
 			$sph_cache[$cacheKey] = $this->modx->getParentIds($id);
 		}
-		if (!$sph_cache[$cacheKey]) {
+		if ( empty($sph_cache[$cacheKey]) ) {  // return if no parents
 			return;
 		}
 		$tmp_id = $sph_cache[$cacheKey][0];
@@ -197,12 +197,21 @@ function getVal($fieldName) {
 				return $cidsCount + 1;
 			}
 			if ($r_index === 'R') {  // pick a random child
-				$child = rand(0, $cidsCount);
+				if (!isset($this->r_cache["R$cacheKey"])) {
+					$this->r_cache["R$cacheKey"] = rand(0, $cidsCount);
+				}
+				$child = $this->r_cache["R$cacheKey"];
 				++$fieldNameOffset;
 			}
 			else {  // get the specified child
 				$child = -1 + (int) $r_index;
-				if ($child > $cidsCount || -$child > $cidsCount + 2) {  // return if index is out of bounds
+				if ($child < 0) {
+					$child += $cidsCount + 2;
+					if ($child < 0) {  // return if index is out of bounds
+						return;
+					}
+				}
+				if ($child > $cidsCount) {  // return if index is out of bounds
 					return;
 				}
 				$fieldNameOffset += strlen($r_index);
