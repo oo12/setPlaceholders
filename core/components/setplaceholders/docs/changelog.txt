@@ -1,5 +1,27 @@
 Changelog for setPlaceholders
 
+setPlaceholders 2.0.0-pl
+------------------------
+* ~3x faster TV handling, now doesn't process them by default
+* adds next/prev sibling selectors. next2 selects the sibling after
+  next, etc.
+* adds a "random child" selector, plus simple ways of retrieving
+  the number of children or parents a resource has, a resource's
+  position amongst its siblings, or the number of items a MIGX TV
+  contains.
+* memory usage improvements
+
+N O T E   T H E S E   C H A N G E S:
+* Removes &fields property (deprecated since v1.1)
+* Now does not process TVs by default. Use &processTVs=`1` if you
+  need to process them.
+* Removes output filter functionality. Use the built-in output
+  filter toPlaceholder instead. It works exactly the same.
+* If you specify an index on the parent, Uparent, child, next or prev
+  selector which is out of bounds, setPlaceholders now returns an empty
+  string, which makes specifying a default value easier.
+
+
 setPlaceholders 1.2.1-pl
 ------------------------
 * Improves child selector performance

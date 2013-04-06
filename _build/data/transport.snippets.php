@@ -40,7 +40,7 @@ $snippets[1]= $modx->newObject('modSnippet');
 $snippets[1]->fromArray(array(
     'id' => 1,
     'name' => 'setPlaceholders',
-    'description' => 'A snippet for getting fields and setting placeholders. Also works as an output filter. Documentation: https://github.com/oo12/setPlaceholders',
+    'description' => 'A snippet for getting fields and setting placeholders. Documentation: https://github.com/oo12/setPlaceholders',
     'snippet' => getSnippetContent($sources['source_core'].'/elements/snippets/setplaceholders.snippet.php'),
 ),'',true,true);
 $properties = include $sources['data'].'/properties/properties.setplaceholders.php';
