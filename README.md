@@ -41,8 +41,7 @@ This is the equivalent of:<br>
 * Simple next / previous, first / last navigation:
 <pre>[[setPlaceholders?
 &nbsp; &ph=`next == next.id || prev == prev.id || first == prevM.id || last == nextM.id`
-]]
-<br>
+]]<br>
 &lt;a href="[[~[[+first]]]]"&gt;First&lt;a&gt;
 [[+prev:!empty=`&lt;a href="[[~[[+prev]]]]"&gt;Previous&lt;a&gt;`]]
 [[+next:!empty=`&lt;a href="[[~[[+next]]]]"&gt;Next&lt;a&gt;`]]
@@ -169,6 +168,6 @@ Items ending with a ▣ return a value; those ending with a . require a further 
 
 Prefixes may be chained where it makes sense.  For instance: ```parent.pagetitle``` or ```42.parent.childR.tv.someTV``` (not that you'd want to do that :-)
 
-setPlaceholders caches the results of some MODX API calls it makes, so getting multiple fields from the same resource or from various parents or children of the same resource is quite efficient, even if the calls occur in different places in the template.
+setPlaceholders caches the results of the MODX API calls it makes, so getting multiple fields from the same resource or from various parents or children of the same resource is quite efficient.
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/34a8457ccfdcdec3f456f0e0b2d45395 "githalytics.com")](http://githalytics.com/oo12/setPlaceholders)
