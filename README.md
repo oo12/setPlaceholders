@@ -148,7 +148,7 @@ Items ending with a ▣ return a value; those ending with a . require a further 
 
 * <strong>child<em>[child #]</em>.</strong> – selects one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. <br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-1.id``` – id of the resource's last child<br>```child-2.id``` – id of the resource's second-to-last child
 
-* <strong>childR.</strong> – selects a random child. This selected child is cached, so you may reuse the selector with the same parent multiple times within a setPlaceholders call to get different values from the same random child. (Setting <em>&amp;staticCache</em> will leave it available for the next setPlacholders call as well.)<br>_Example_: ```12.childR.id || 12.childR.pagetitle``` — returns the id number and pagetitle of a randomly selected child of resource 12.
+* <strong>childR.</strong> – selects a random child. This selected child is cached, so you may reuse the selector with the same parent multiple times within a setPlaceholders call to get different values from the same random child. (Setting <em>&amp;staticCache</em> will leave it available for the next setPlacholders call as well.)<br>_Example_: ```12.childR.id || 12.childR.pagetitle``` — returns the id number and pagetitle of the same randomly selected child of resource 12.
 
 * <strong>childC</strong> ▣ – returns a count of the resource's immediate children.
 
