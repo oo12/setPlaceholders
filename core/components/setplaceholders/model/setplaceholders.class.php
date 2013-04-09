@@ -88,7 +88,7 @@ function getVal($fieldName) {
 
 /*  Parent selector  */
 	if ( strncmp('parent', $fieldPrefixes[$idx], 6) === 0 ) {
-		$level = 0;
+		$level = 1;
 		$r_index = substr($fieldPrefixes[$idx], 6);
 		if ( $r_index ) {  // ready any parent index
 			$level = (int) $r_index;
@@ -98,7 +98,7 @@ function getVal($fieldName) {
 		if ( !isset($sph_cache[$cacheKey]) ) {
 			$sph_cache[$cacheKey] = $this->modx->getParentIds($id);
 		}
-		if ( $level >= count($sph_cache[$cacheKey]) ) {  // return NULL if out of bounds
+		if ( $level > count($sph_cache[$cacheKey]) ) {  // return NULL if out of bounds
 			return;
 		}
 		$id = $sph_cache[$cacheKey][$level - 1];
