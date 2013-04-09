@@ -1,4 +1,4 @@
-setPlaceholders 2.0
+setPlaceholders 2.0.1
 ===============
 
 A MODX Revolution snippet for getting fields and setting placeholders. Download from the MODX [Extras Repository](http://modx.com/extras/package/setplaceholders).

@@ -1,5 +1,10 @@
 Changelog for setPlaceholders
 
+setPlaceholders 2.0.1-pl
+------------------------
+* Fixes a bug with the parent selector
+
+
 setPlaceholders 2.0.0-pl
 ------------------------
 * ~3x faster TV handling, now doesn't process them by default
@@ -56,13 +61,3 @@ setPlaceholders 1.1.0-pl
 * Performance and caching improvements
 
 * fix an issue that can generate PHP notices
-
-
-setPlaceholders 1.0.1-pl
-------------------------
-* Fix a bug that can cause a PHP warning in some cases.
-
-
-setPlaceholders 1.0.0-pl
-------------------------
-Initial Version

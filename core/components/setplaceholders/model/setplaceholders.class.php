@@ -4,7 +4,7 @@
  * Class for setPlaceholders
  *
  * @package setplaceholders
- * @version 2.0.0-pl
+ * @version 2.0.1-pl
  * @author Jason Grant <dadima@gmail.com>
  */
 class sph {
