@@ -1,4 +1,4 @@
-setPlaceholders 2.0.1
+setPlaceholders 2.1
 ===============
 
 A MODX Revolution snippet for getting fields and setting placeholders. Download from the MODX [Extras Repository](http://modx.com/extras/package/setplaceholders).
@@ -130,15 +130,17 @@ A placeholder consists of 1&ndash;3 parts:
 
 <strong>Fieldname selector prefixes</strong>
 
-Items ending with a ▣ return a value; those ending with a . require a further selector or a field name.  _[square brackets]_ indicates an optional parameter, _{curly braces}_ — a required one.
+These are evaluated in the order listed.  Items ending with a ▣ return a value; those ending with a . require a further selector or a field name.  _[square brackets]_ indicates an optional parameter, _{curly braces}_ — a required one.  Prefixes may be chained where it makes sense, but—except for ```child```*—may not be repeated.  For instance: ```parent.pagetitle``` or ```42.parent.childR.tv.someTV``` (not that you'd want to do that :-)
+
+* <strong>get.<em>{variable name}</em></strong> ▣ – a variable from $_GET<br>_Example_: ```get.page``` – the value of $_GET['page']
+
+* <strong>post.<em>{variable name}</em></strong> ▣ – a variable from $_POST (be sure to call setPlaceholders uncached if you're using either get or post)
 
 * <strong>_resource_id_.</strong> – Selects a specific resource. Otherwise the value of _&amp;id_ (by default the current resource) is used.<br>_Example_: ```12.pagetitle``` – get the pagetitle of resource 12.
 
-* <strong>parent<em>[level]</em>.</strong> – selects the resource's parent. Use the optional level number to move further up the tree.<br>_Examples_: ```parent.id``` – the resource's parent's id<br>```parent2.id``` – the resource's grandparent's id
-
 * <strong>Uparent<em>[level]</em>.</strong> – selects the resource's ultimate parent, that is, its top-level ancestor in the resource tree. (<strong>Uparent.</strong> and <strong>parent.</strong> are essentially mirror images of one another.) Use the optional level number to move further down the tree. <br>_Examples_: ```Uparent.id``` – the resource's ultimate parent's id<br>```Uparent2.id``` – the resource's 2nd top-most parent's id
 
-* <strong>level</strong> ▣ – returns the resource's level number in the resouce tree.  A top-level resource would return 1, its child — 2, etc.
+* <strong>parent<em>[level]</em>.</strong> – selects the resource's parent. Use the optional level number to move further up the tree.<br>_Examples_: ```parent.id``` – the resource's parent's id<br>```parent2.id``` – the resource's grandparent's id
 
 * <strong>next<em>[index]</em>.</strong> – selects the resource's next sibling. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order. Add a numeric index to jump ahead by that many. An index of <b>M</b> (max) selects the last sibling.<br>_Example_: ```next2.id``` – returns the id of the resource's sibling-after-next.
 
@@ -146,7 +148,7 @@ Items ending with a ▣ return a value; those ending with a . require a further 
 
 * <strong>index</strong> ▣ – Returns a resource's index within a list of its siblings. The first sibling will return 1, the second — 2, and so on.
 
-* <strong>child<em>[child #]</em>.</strong> – selects one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. <br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-1.id``` – id of the resource's last child<br>```child-2.id``` – id of the resource's second-to-last child
+* <strong>child<em>[child #]</em>.</strong> – selects one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. Unlike other selectors, ```child```* may be repeated multiple times to move further down the tree.<br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-1.id``` – id of the resource's last child<br>```child-2.id``` – id of the resource's second-to-last child<br>```child.child-1.id``` — id of the first child's last child
 
 * <strong>childR.</strong> – selects a random child. This selected child is cached, so you may reuse the selector with the same parent multiple times within a setPlaceholders call to get different values from the same random child. (Setting <em>&amp;staticCache</em> will leave it available for the next setPlacholders call as well.)<br>_Example_: ```12.childR.id || 12.childR.pagetitle``` — returns the id number and pagetitle of the same randomly selected child of resource 12.
 
@@ -160,13 +162,9 @@ Items ending with a ▣ return a value; those ending with a . require a further 
 
 * <strong>json<em>[object limit]</em>.<em>{JSON TV name}</em></strong> ▣ – an alias for <b>migx</b>. And <b>jsonC</b> is an alias for <b>migxC</b>.
 
+* <strong>level</strong> ▣ – returns the resource's level number in the resouce tree.  A top-level resource would return 1, its child — 2, etc.
+
 * <strong><em>field name</em></strong> ▣ — return the value of the specified field for the selected resource. Basically anything you could get with the [[* ]] tag.
-
-* <strong>get.<em>{variable name}</em></strong> ▣ – a variable from $_GET<br>_Example_: ```get.page``` – the value of $_GET['page']
-
-* <strong>post.<em>{variable name}</em></strong> ▣ – a variable from $_POST (be sure to call setPlaceholders uncached if you're using either get or post)
-
-Prefixes may be chained where it makes sense.  For instance: ```parent.pagetitle``` or ```42.parent.childR.tv.someTV``` (not that you'd want to do that :-)
 
 setPlaceholders caches the results of the MODX API calls it makes, so getting multiple fields from the same resource or from various parents or children of the same resource is quite efficient.
 
