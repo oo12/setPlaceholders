@@ -4,7 +4,7 @@
  * Class for setPlaceholders
  *
  * @package setplaceholders
- * @version 2.0.1-pl
+ * @version 2.1.0-beta
  * @author Jason Grant <dadima@gmail.com>
  */
 class sph {
@@ -175,7 +175,7 @@ function getVal($fieldName) {
 
 
 /*  Child selector  */
-	if ( strncmp('child', $fieldPrefixes[$idx], 5) === 0 ) {
+	while ( strncmp('child', $fieldPrefixes[$idx], 5) === 0 ) {
 		$cacheKey = $id . $this->sortby . $this->sortdir[0];
 		if ( !isset($sph_cache[$cacheKey]) ) {
 			$q = $this->modx->newQuery('modResource');
@@ -254,6 +254,9 @@ function getVal($fieldName) {
 		if ($migx_rows && $migx) {
 			if ($migx_rows === 'C') {
 				return count($migx);
+			}
+			elseif ($migx_rows === 'R') {
+				return $migx[ rand(0, count($migx)-1) ];
 			}
 			$migx = array_slice($migx, 0, (int) $migx_rows);
 		}
