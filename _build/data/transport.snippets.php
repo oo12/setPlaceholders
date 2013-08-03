@@ -1,7 +1,7 @@
 <?php
 /**
  * setPlaceholders transport snippets
- * Copyright 2012-2013 Jason Grant
+ * Copyright 2013 Jason Grant
  * @author Jason Grant
  *
  * setPlaceholders is free software; you can redistribute it and/or modify it

@@ -1,7 +1,7 @@
 setPlaceholders
 
 Author: Jason Grant
-Copyright 2012-2013
+Copyright 2013
 
 Full documentation, bugs and feature requests:
 https://github.com/oo12/setPlaceholders

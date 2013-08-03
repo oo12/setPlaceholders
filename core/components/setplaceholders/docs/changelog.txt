@@ -1,12 +1,19 @@
 Changelog for setPlaceholders
 
-setPlaceholders 2.0.1-pl
-------------------------
+2.1.0-pl
+--------
+* [#2] add the ability to chain child selectors.
+  Ex: child-1.child2.pagetitle. (pagetitle of the 2nd child of the
+  current resource's last child)
+
+
+2.0.1-pl
+--------
 * Fixes a bug with the parent selector
 
 
-setPlaceholders 2.0.0-pl
-------------------------
+2.0.0-pl
+--------
 * ~3x faster TV handling, now doesn't process them by default
 * adds next/prev sibling selectors. next2 selects the sibling after
   next, etc.
@@ -27,8 +34,8 @@ N O T E   T H E S E   C H A N G E S:
   string, which makes specifying a default value easier.
 
 
-setPlaceholders 1.2.1-pl
-------------------------
+1.2.1-pl
+--------
 * Improves child selector performance
 * Changes behavior when a value isn't found for a placeholder: now the
   placeholder will be set to an empty string so MODX will fully parse
@@ -36,8 +43,8 @@ setPlaceholders 1.2.1-pl
 * A few other minor fixes and improvements
 
 
-setPlaceholders 1.2.0-pl
-------------------------
+1.2.0-pl
+--------
 * Adds support for child resources. Ex: child4.pagetitle (4th child) or
   child-1.pagetitle (last child)
 
@@ -48,8 +55,8 @@ setPlaceholders 1.2.0-pl
 * Minor performance improvements
 
 
-setPlaceholders 1.1.0-pl
-------------------------
+1.1.0-pl
+--------
 * Add &ph property with a more powerful syntax.  It adds:
   - "Ultimate parent" functionality
   - ability to specify different resource IDs
