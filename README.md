@@ -8,7 +8,7 @@ setPlaceholders combines the usefulness of placeholders—which are rather like 
 New and changed in this version
 -----------------------------
 
-Please see the [changelog](https://github.com/oo12/setPlaceholders/blob/master/core/components/setplaceholders/docs/changelog.txt) for a summary.  There are a few changes which affect backwards compatibility with 1.x, so please look through it if you're upgrading.
+Please see the [changelog](https://github.com/oo12/setPlaceholders/blob/master/core/components/setplaceholders/docs/changelog.txt) for a summary.  Version 2.x has a few changes which affect backwards compatibility with 1.x, so please look through it if you're upgrading.
 
 Examples
 --------
@@ -35,7 +35,7 @@ Sets the placeholders:<br>
 <pre>[[setPlaceholders? &ph=`Uparent2.tv.someTV !! "No such TV"` &output=`1`]]</pre>
 Returns the value of someTV for the second-highest parent of the current resource, or &ldquo;No such TV&rdquo; if that TV is empty or not found.  It also puts this value in ```[[+sph.Uparent2.tv.someTV]]```<br>
 This is the equivalent of:<br>
-<pre>[[getResourceField? &id=`[[UltimateParent? &topLevel=`2`]]`
+<pre>[[getResourceField? &id=`[[UltimateParent? &topLevel=`3`]]`
 &nbsp; &field=`someTV` &isTV=`1` &default=`No such TV`]]</pre>
 
 * Simple next / previous, first / last navigation:
@@ -167,5 +167,10 @@ These are evaluated in the order listed.  Items ending with a ▣ return a value
 * <strong><em>field name</em></strong> ▣ — return the value of the specified field for the selected resource. Basically anything you could get with the [[* ]] tag.
 
 setPlaceholders caches the results of the MODX API calls it makes, so getting multiple fields from the same resource or from various parents or children of the same resource is quite efficient.
+
+Notes
+------
+
+* If you're using setPlaceholders inside a chunk used multiple times on a page, like as a tpl for getResources, and are calling it uncached—which you shouldn't be in most cases—then you may run into an interesting aspect of evaluation order by the MODX parser.  If you've got uncached snippets storing values in cached placeholders you can get unexpected results from the placeholders. See this [issue](https://github.com/oo12/setPlaceholders/issues/3) for an in-depth discussion.
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/34a8457ccfdcdec3f456f0e0b2d45395 "githalytics.com")](http://githalytics.com/oo12/setPlaceholders)

@@ -1,7 +1,7 @@
 <?php
 /**
  * setPlaceholders
- * Copyright 2012-2013 Jason Grant
+ * Copyright 2013 Jason Grant
  *
  * setPlaceholders is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -18,10 +18,8 @@
  *
  * @package setPlaceholders
  * @author Jason Grant
- * @version 2.0.0-pl
- */
-
-/**
+ * @version 2.1.0-pl
+ *
  * Documentation, examples, bug reports, etc.
  * https://github.com/oo12/setPlaceholders
  *
