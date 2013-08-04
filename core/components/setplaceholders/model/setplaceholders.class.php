@@ -272,6 +272,9 @@ function getVal($fieldName) {
 			if ($migx_rows === 'C') {
 				return count($migx);
 			}
+			elseif ($migx_rows === 'R') {
+				return array($migx[ rand(0, count($migx)-1) ]);
+			}
 			$migx = array_slice($migx, 0, (int) $migx_rows);
 		}
 		return $migx;
