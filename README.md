@@ -162,7 +162,7 @@ These are evaluated in the order listed.  Items ending with a ▣ return a value
 
 * <strong>migxR.<em>{MIGX TV name}</em></strong> ▣ – returns a random item from a MIGX TV.  Using the MIGX TV from the example above, ```photos == parent.migxR.imagestv``` will set the placeholders ```[[+photos.title1]]``` ```[[+photos.image1]]``` (with values from a random row in the MIGX TV) and ```[[+photos.total]]``` will be 1.
 
-* <strong>json<em>[object limit]</em>.<em>{JSON TV name}</em></strong> ▣ – an alias for <b>migx</b>. And <b>jsonC</b> and <b>jsonR</b> are aliases for <b>migxC</b>, and <b>jsonR</b>.
+* <strong>json<em>[object limit]</em>.<em>{JSON TV name}</em></strong> ▣ – an alias for <b>migx</b>. And <b>jsonC</b> and <b>jsonR</b> are aliases for <b>migxC</b> and <b>migxR</b>.
 
 * <strong>level</strong> ▣ – returns the resource's level number in the resouce tree.  A top-level resource would return 1, its child — 2, etc.
 
