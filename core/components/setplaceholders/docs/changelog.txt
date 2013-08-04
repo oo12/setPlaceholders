@@ -5,6 +5,7 @@ Changelog for setPlaceholders
 * [#2] add the ability to chain child selectors.
   Ex: child-1.child2.pagetitle. (pagetitle of the 2nd child of the
   current resource's last child)
+* add a migxR/jsonR selector to get a random item from a MIGX TV.
 
 
 2.0.1-pl
