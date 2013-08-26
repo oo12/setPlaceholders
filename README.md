@@ -40,12 +40,12 @@ This is the equivalent of:<br>
 
 * Simple next / previous, first / last navigation:
 <pre>[[setPlaceholders?
-&nbsp; &ph=`next == next.id || prev == prev.id || first == prevM.id || last == nextM.id`
+&nbsp; &ph=`next == next.uri || prev == prev.uri || first == prevM.uri || last == nextM.uri`
 ]]<br>
-&lt;a href="[[~[[+first]]]]"&gt;First&lt;a&gt;
-[[+prev:!empty=`&lt;a href="[[~[[+prev]]]]"&gt;Previous&lt;a&gt;`]]
-[[+next:!empty=`&lt;a href="[[~[[+next]]]]"&gt;Next&lt;a&gt;`]]
-&lt;a href="[[~[[+last]]]]"&gt;Last&lt;a&gt;
+&lt;a href="[[+first]]"&gt;First&lt;a&gt;
+[[+prev:!empty=`&lt;a href="[[+prev]]"&gt;Previous&lt;a&gt;`]]
+[[+next:!empty=`&lt;a href="[[+next]]"&gt;Next&lt;a&gt;`]]
+&lt;a href="[[+last]]"&gt;Last&lt;a&gt;
 </pre>
 
 * Getting some URL parameters:<br>
