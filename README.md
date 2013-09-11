@@ -1,4 +1,4 @@
-setPlaceholders 2.1
+setPlaceholders 2.2
 ===============
 
 A MODX Revolution snippet for getting fields and setting placeholders. Download from the MODX [Extras Repository](http://modx.com/extras/package/setplaceholders).
@@ -132,9 +132,11 @@ A placeholder consists of 1&ndash;3 parts:
 
 These are evaluated in the order listed.  Items ending with a ▣ return a value; those ending with a . require a further selector or a field name.  _[square brackets]_ indicates an optional parameter, _{curly braces}_ — a required one.  Prefixes may be chained where it makes sense, but—except for ```child```*—may not be repeated.  For instance: ```parent.pagetitle``` or ```42.parent.childR.tv.someTV``` (not that you'd want to do that :-)
 
-* <strong>get.<em>{variable name}</em></strong> ▣ – a variable from $_GET<br>_Example_: ```get.page``` – the value of $_GET['page']
+* <strong>get.<em>{variable name}</em></strong> ▣ – a variable from $_GET (be sure to call setPlaceholders uncached if you're using either get, post or request)<br>_Example_: ```get.page``` – the value of $_GET['page']
 
-* <strong>post.<em>{variable name}</em></strong> ▣ – a variable from $_POST (be sure to call setPlaceholders uncached if you're using either get or post)
+* <strong>post.<em>{variable name}</em></strong> ▣ – a variable from $_POST
+
+* <strong>request.<em>{variable name}</em></strong> ▣ – a variable from $_REQUEST (be sure to call setPlaceholders uncached if you're using either get or post)
 
 * <strong>_resource_id_.</strong> – Selects a specific resource. Otherwise the value of _&amp;id_ (by default the current resource) is used.<br>_Example_: ```12.pagetitle``` – get the pagetitle of resource 12.
 

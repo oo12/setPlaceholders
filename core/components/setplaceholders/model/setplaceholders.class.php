@@ -18,7 +18,6 @@
  *
  * @package setPlaceholders
  * @author Jason Grant
- * @version 2.1.0-pl
  *
  * Documentation, examples, bug reports, etc.
  * https://github.com/oo12/setPlaceholders
@@ -59,11 +58,14 @@ function getVal($fieldName) {
 	$fieldPrefixes = explode('.', $fieldName);
 
 /*  GET/POST variables  */
-	if ( $fieldPrefixes[0] === 'get' ) {
+	if ($fieldPrefixes[0] === 'get') {
 		return $_GET[substr($fieldName, 4)];
 	}
-	if ( $fieldPrefixes[0] === 'post' ) {
+	if ($fieldPrefixes[0] === 'post') {
 		return $_POST[substr($fieldName, 5)];
+	}
+	if ($fieldPrefixes[0] === 'request') {
+		return $_REQUEST[substr($fieldName, 8)];
 	}
 
 
