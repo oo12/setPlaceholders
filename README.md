@@ -126,7 +126,7 @@ A placeholder consists of 1&ndash;3 parts:
 
 2. A value or a field name.  Values are in quotes and are simply passed on without being evaluated further (though the quotes are trimmed off).  A value might be a bit of text or the output from another snippet.  Field names are parsed and evaluated, and represent some bit of data you'd like retrieved.  They can have multiple selector prefixes.<br><strong>Examples</strong>: _Values_ – ```"A text message"```, ```"[[someSnippet]]"``` (MODX will evaluate someSnippet; setPlaceholders won't do anything further to the result)<br>_Fieldnames_ – ```pagetitle```, ```13.Uparent2.tv.someTV```
 
-3. _!! default_ (optional).  If the fieldname wasn't found or was empty, the default will be used.  Defaults may be values or field names.
+3. _!! fallback_ (optional).  If the fieldname wasn't found or was empty, the fallback will be used.  Multiple fallbacks are allowed (i.e. field !! fallback1 !! fallback2) and may be fieldnames or values.
 
 <strong>Fieldname selector prefixes</strong>
 
