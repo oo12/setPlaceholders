@@ -106,16 +106,25 @@ function getVal($fieldName) {
 
 
 /*  Parent selector  */
-	if ( strncmp('parent', $fieldPrefixes[$idx], 6) === 0 ) {
+	if (strncmp('parent', $fieldPrefixes[$idx], 6) === 0) {
+		$cacheKey = $id . 'p_';
+		if (!isset($sph_cache[$cacheKey])) {
+			$sph_cache[$cacheKey] = $this->modx->getParentIds($id);
+		}
+		if ($fieldPrefixes[$idx][6] === 's') {  // parents
+			$parentsList = $sph_cache[$cacheKey];
+			array_pop($parentsList);  // the top-level parent is always 0, which we don't need
+			$parentsList = array_reverse($parentsList);  // reorder from resource upwards
+			if (isset($fieldPrefixes[$idx][7]) && $fieldPrefixes[$idx][7] === 'i') {
+				$parentsList[] = $id;  // include the resource's id too
+			}
+			return implode(',', $parentsList);
+		}
 		$level = 1;
 		$r_index = substr($fieldPrefixes[$idx], 6);
 		if ( $r_index ) {  // ready any parent index
 			$level = (int) $r_index;
 			$fieldNameOffset += strlen($r_index);
-		}
-		$cacheKey = $id . 'p_';
-		if ( !isset($sph_cache[$cacheKey]) ) {
-			$sph_cache[$cacheKey] = $this->modx->getParentIds($id);
 		}
 		if ( $level > count($sph_cache[$cacheKey]) ) {  // return NULL if out of bounds
 			return;
