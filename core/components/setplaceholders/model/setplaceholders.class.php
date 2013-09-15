@@ -57,7 +57,8 @@ function getVal($fieldName) {
 
 	$fieldPrefixes = explode('.', $fieldName);
 
-/*  GET/POST variables  */
+
+/*  GET/POST/REQUEST variables  */
 	if ($fieldPrefixes[0] === 'get') {
 		return $_GET[substr($fieldName, 4)];
 	}
@@ -84,7 +85,7 @@ function getVal($fieldName) {
 
 
 /*  Ultimate parent selector  */
-	if ( strncmp('Uparent', $fieldPrefixes[$idx], 7) === 0 ) {
+	if (strncmp('Uparent', $fieldPrefixes[$idx], 7) === 0) {
 		$cacheKey = $id . 'p_';
 		if (!isset($sph_cache[$cacheKey])) {
 			$sph_cache[$cacheKey] = $this->modx->getParentIds($id, 50);
@@ -116,7 +117,7 @@ function getVal($fieldName) {
 	}
 
 
-/*  Parent selector  */
+/*  Parent/Parents selector  */
 	if (strncmp('parent', $fieldPrefixes[$idx], 6) === 0) {
 		$cacheKey = $id . 'p_';
 		if (!isset($sph_cache[$cacheKey])) {
@@ -164,16 +165,16 @@ function getVal($fieldName) {
 	$tmp = substr($fieldPrefixes[$idx], 0, 4);
 	if ($tmp === 'prev' || $tmp === 'next' || $tmp === 'inde') {
 		$cacheKey = $id . 'p_';
-		if ( !isset($sph_cache[$cacheKey]) ) {  // first get the parent
+		if (!isset($sph_cache[$cacheKey])) {  // first get the parent...
 			$sph_cache[$cacheKey] = $this->modx->getParentIds($id, 50);
 			$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]);
 		}
-		if ( empty($sph_cache[$cacheKey]) ) {  // return if no parents
+		if (empty($sph_cache[$cacheKey])) {  // return if no parents
 			return;
 		}
 		$tmp_id = $sph_cache[$cacheKey][0];
 		$cacheKey = $tmp_id . $this->sortby . $this->sortdir[0];
-		if ( !isset($sph_cache[$cacheKey]) )  {  // then its children
+		if (!isset($sph_cache[$cacheKey]))  {  // ...then its children
 			$q = $this->modx->newQuery('modResource');
 			$q->where(array('parent'=> $tmp_id, 'published' => 1, 'deleted' => 0));
 			$q->select('modResource.id');
@@ -183,14 +184,14 @@ function getVal($fieldName) {
 			$sph_cache[$cacheKey] = $q->stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 		}
 		$pos = array_search($id, $sph_cache[$cacheKey]);
-		if ( $pos === FALSE ) {
+		if ($pos === FALSE) {
 			return;
 		}
-		if ( $tmp === 'inde')  {  // return id's position amongst its siblings
+		if ($tmp === 'inde')  {  // return id's position amongst its siblings
 			return $pos + 1;
 		}
 		$r_index = substr($fieldPrefixes[$idx], 4);
-		if ( $r_index ) {  // ready any next/prev offset
+		if ($r_index) {  // ready any next/prev offset
 			$fieldNameOffset += strlen($r_index);
 			if ($r_index !== 'M') {  // if it's not a "max" sibling
 				$r_index = (int) $r_index;
@@ -258,7 +259,7 @@ function getVal($fieldName) {
 				++$fieldNameOffset;
 			}
 			else {  // get the specified child
-				$child = -1 + (int) $r_index;
+				$child = $r_index - 1;
 				if ($child < 0) {
 					$child += $cidsCount + 2;
 					if ($child < 0) {  // return if index is out of bounds
