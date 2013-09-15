@@ -1,5 +1,14 @@
 Changelog for setPlaceholders
 
+2.2.0-pl [15.09.2013]
+---------------------
+* Add the ability to process more than one fallback/default value
+* Add a request selector for stuff from the $_REQUEST superglobal
+* Add parents and parentsI selectors for returning a list of
+  parent IDs from the ultimate parent down to the resource
+* Add bounded versions of the parent and Uparent selectors
+
+
 2.1.0-pl
 --------
 * [#2] add the ability to chain child selectors.

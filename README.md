@@ -1,4 +1,4 @@
-setPlaceholders 2.1
+setPlaceholders 2.2
 ===============
 
 A MODX Revolution snippet for getting fields and setting placeholders. Download from the MODX [Extras Repository](http://modx.com/extras/package/setplaceholders).
@@ -47,6 +47,7 @@ This is the equivalent of:<br>
 [[+next:!empty=`&lt;a href="[[+next]]"&gt;Next&lt;a&gt;`]]
 &lt;a href="[[+last]]"&gt;Last&lt;a&gt;
 </pre>
+Using uri is faster than getting the id and turning it into a link with [[~]].  However it won’t work if the resource doesn't have an alias set.
 
 * Getting some URL parameters:<br>
 <pre>[[!setPlaceholders? &ph=`get.type !! "1" || person == get.person`]]</pre>
@@ -122,51 +123,63 @@ Properties
 
 A placeholder consists of 1&ndash;3 parts:
 
-1. _placeholder_name ==_ (optional). If specified, this will be the placeholder name.  If left off, the placeholder name will be formed from a prefix (_&amp;prefix_) + the field name.<br><strong>Examples</strong>: ```pid == parent.id``` – parent.id will be stored in [[+pid]]<br> ```parent.id``` – parent.id will be stored in [[+sph.parent.id]] since no specific placeholder name was given and _sph._ is the default prefix.
+1. _placeholder_name ==_ (optional). If specified, this will be the placeholder name.  If left off, the placeholder name will be formed from a prefix (_&amp;prefix_) + the field name.<br>**Examples**: ```pid == parent.id``` – parent.id will be stored in [[+pid]]<br> ```parent.id``` – parent.id will be stored in [[+sph.parent.id]] since no specific placeholder name was given and _sph._ is the default prefix.
 
-2. A value or a field name.  Values are in quotes and are simply passed on without being evaluated further (though the quotes are trimmed off).  A value might be a bit of text or the output from another snippet.  Field names are parsed and evaluated, and represent some bit of data you'd like retrieved.  They can have multiple selector prefixes.<br><strong>Examples</strong>: _Values_ – ```"A text message"```, ```"[[someSnippet]]"``` (MODX will evaluate someSnippet; setPlaceholders won't do anything further to the result)<br>_Fieldnames_ – ```pagetitle```, ```13.Uparent2.tv.someTV```
+2. A value or a field name.  Values are in quotes and are simply passed on without being evaluated further (though the quotes are trimmed off).  A value might be a bit of text or the output from another snippet.  Field names are parsed and evaluated, and represent some bit of data you'd like retrieved.  They can have multiple selector prefixes.<br>**Examples**: _Values_ – ```"A text message"```, ```"[[someSnippet]]"``` (MODX will evaluate someSnippet; setPlaceholders won't do anything further to the result)<br>_Fieldnames_ – ```pagetitle```, ```13.Uparent2.tv.someTV```
 
-3. _!! default_ (optional).  If the fieldname wasn't found or was empty, the default will be used.  Defaults may be values or field names.
+3. _!! fallback_ (optional).  If the fieldname wasn't found or was empty, the fallback will be used.  Multiple fallbacks are allowed (i.e. field !! fallback1 !! fallback2) and may be fieldnames or values.
 
-<strong>Fieldname selector prefixes</strong>
+### Fieldname selector prefixes
 
 These are evaluated in the order listed.  Items ending with a ▣ return a value; those ending with a . require a further selector or a field name.  _[square brackets]_ indicates an optional parameter, _{curly braces}_ — a required one.  Prefixes may be chained where it makes sense, but—except for ```child```*—may not be repeated.  For instance: ```parent.pagetitle``` or ```42.parent.childR.tv.someTV``` (not that you'd want to do that :-)
 
-* <strong>get.<em>{variable name}</em></strong> ▣ – a variable from $_GET<br>_Example_: ```get.page``` – the value of $_GET['page']
+_All selector names are cAsE SensitiVe._
 
-* <strong>post.<em>{variable name}</em></strong> ▣ – a variable from $_POST (be sure to call setPlaceholders uncached if you're using either get or post)
+* **get._{variable name}_** ▣ – a variable from $_GET (be sure to call setPlaceholders uncached if you're using either get, post or request)<br>_Example_: ```get.page``` – the value of $_GET['page']
 
-* <strong>_resource_id_.</strong> – Selects a specific resource. Otherwise the value of _&amp;id_ (by default the current resource) is used.<br>_Example_: ```12.pagetitle``` – get the pagetitle of resource 12.
+* **post._{variable name}_** ▣ – a variable from $_POST
 
-* <strong>Uparent<em>[level]</em>.</strong> – selects the resource's ultimate parent, that is, its top-level ancestor in the resource tree. (<strong>Uparent.</strong> and <strong>parent.</strong> are essentially mirror images of one another.) Use the optional level number to move further down the tree. <br>_Examples_: ```Uparent.id``` – the resource's ultimate parent's id<br>```Uparent2.id``` – the resource's 2nd top-most parent's id
+* **request._{variable name}_** ▣ – a variable from $_REQUEST
 
-* <strong>parent<em>[level]</em>.</strong> – selects the resource's parent. Use the optional level number to move further up the tree.<br>_Examples_: ```parent.id``` – the resource's parent's id<br>```parent2.id``` – the resource's grandparent's id
+* **_resource_id_.** – Selects a specific resource. Otherwise the value of _&amp;id_ (by default the current resource) is used.<br>_Example_: ```12.pagetitle``` – get the pagetitle of resource 12.
 
-* <strong>next<em>[index]</em>.</strong> – selects the resource's next sibling. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order. Add a numeric index to jump ahead by that many. An index of <b>M</b> (max) selects the last sibling.<br>_Example_: ```next2.id``` – returns the id of the resource's sibling-after-next.
+* **Uparent_[level]_.** – selects the resource's ultimate parent, that is, its top-level ancestor in the resource tree. (**Uparent** and **parent** are essentially mirror images of one another.) Use the optional level number to move further down the tree.<br>_Examples_: ```Uparent.id``` – the resource's ultimate parent's id<br>```Uparent2.id``` – the resource's 2nd top-most parent's id
 
-* <strong>prev<em>[index]</em>.</strong> – selects the resource's previous sibling. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order. Add a numeric index to jump back by that many. An index of <b>M</b> (max) selects the first sibling.
+* **UparentB_[level]_.** – bounded Uparent.  Unlike the standard **Uparent** which returns nothing if there is no ultimate parent (for a resource already at the top of the tree, for example), **UparentB** will select the resource itself if there isn’t an ultimate parent.<br>_Example_: ```UparentB.id``` is equivalent to ```Uparent.id !! id```.
 
-* <strong>index</strong> ▣ – Returns a resource's index within a list of its siblings. The first sibling will return 1, the second — 2, and so on.
+* **parent_[level]_.** – selects the resource's parent. Use the optional level number to move further up the tree.<br>_Examples_: ```parent.id``` – the resource’s parent’s id<br>```parent2.id``` – the resource’s grandparent’s id
 
-* <strong>child<em>[child #]</em>.</strong> – selects one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. Unlike other selectors, ```child```* may be repeated multiple times to move further down the tree.<br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-1.id``` – id of the resource's last child<br>```child-2.id``` – id of the resource's second-to-last child<br>```child.child-1.id``` — id of the first child's last child
+* **parentB_[level]_.** – bounded parent. Similar idea to **UparentB** above.<br>_Example_: ```parent25.id``` will return nothing (unless you have a crazy deep resource tree), but ```parentB25.id``` will be equivalent to ```UparentB.id``` since it won't let you go past the top of the resource tree.
 
-* <strong>childR.</strong> – selects a random child. This selected child is cached, so you may reuse the selector with the same parent multiple times within a setPlaceholders call to get different values from the same random child. (Setting <em>&amp;staticCache</em> will leave it available for the next setPlacholders call as well.)<br>_Example_: ```12.childR.id || 12.childR.pagetitle``` — returns the id number and pagetitle of the same randomly selected child of resource 12.
+* **parents** ▣ – Returns a comma-separated list of the resource’s parents, from the ultimate parent on the left to the immediate parent on the right. Sometimes useful for passing on to pdoResources, getResources or similar.
 
-* <strong>childC</strong> ▣ – returns a count of the resource's immediate children.
+* **parentsI** ▣ – (uppercase i at the end) Same as _parents_ but adds the resource’s id as the last term of the string.
 
-* <strong>tv.<em>{TV name}</em></strong> ▣ – returns the value of the specified TV.  By default TV values are unprocessed.  Use _&amp;processTVs_ to change this.
+* **next_[index]_.** – selects the resource's next sibling. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order. Add a numeric index to jump ahead by that many. An index of <b>M</b> (max) selects the last sibling.<br>_Example_: ```next2.id``` – returns the id of the resource's sibling-after-next.
 
-* <strong>migx<em>[object limit]</em>.<em>{MIGX TV name}</em></strong> ▣ – special processing for MIGX TVs (or for other arrays of JSON objects).  If you use this selector, setPlaceholders will loop through the array and create placeholders for each key/value pair (it skips MIGX\_id), plus a total. The placeholder names are in the format _[main placeholder name].[key][item #]_. Adding an optional number after _migx_ limits the results to the first _N_ objects in the TV.<br>_Example_: The parent resource has a MIGX TV called imagestv with two fields: title and image.  The resource has three items stored in this tv. ```photos == parent.migx.imagestv``` will set 7 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` ```[[+photos.title2]]``` ```[[+photos.image2]]``` ```[[+photos.title3]]``` ```[[+photos.image3]]``` and ```[[+photos.total]]``` (the number of items processed: 3)<br>```photos == parent.migx1.imagestv``` will set 3 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` and ```[[+photos.total]]``` (1).
+* **prev_[index]_.** – selects the resource's previous sibling. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order. Add a numeric index to jump back by that many. An index of <b>M</b> (max) selects the first sibling.
 
-* <strong>migxC.<em>{MIGX TV name}</em></strong> ▣ – returns a count of the items in a MIGX TV.
+* **index** ▣ – Returns a resource's index within a list of its siblings. The first sibling will return 1, the second — 2, and so on.
 
-* <strong>migxR.<em>{MIGX TV name}</em></strong> ▣ – returns a random item from a MIGX TV.  Using the MIGX TV from the example above, ```photos == parent.migxR.imagestv``` will set the placeholders ```[[+photos.title1]]``` ```[[+photos.image1]]``` (with values from a random row in the MIGX TV) and ```[[+photos.total]]``` will be 1.
+* **child_[child #]_.** – selects one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. Unlike other selectors, ```child```* may be repeated multiple times to move further down the tree.<br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-1.id``` – id of the resource's last child<br>```child-2.id``` – id of the resource's second-to-last child<br>```child.child-1.id``` — id of the first child's last child
 
-* <strong>json<em>[object limit]</em>.<em>{JSON TV name}</em></strong> ▣ – an alias for <b>migx</b>. And <b>jsonC</b> and <b>jsonR</b> are aliases for <b>migxC</b> and <b>migxR</b>.
+* **childR.** – selects a random child. This selected child is cached, so you may reuse the selector with the same parent multiple times within a setPlaceholders call to get different values from the same random child. (Setting _&amp;staticCache_ will leave it available for the next setPlacholders call as well.)<br>_Example_: ```12.childR.id || 12.childR.pagetitle``` — returns the id number and pagetitle of the same randomly selected child of resource 12.
 
-* <strong>level</strong> ▣ – returns the resource's level number in the resouce tree.  A top-level resource would return 1, its child — 2, etc.
+* **childC** ▣ – returns a count of the resource's immediate children.
 
-* <strong><em>field name</em></strong> ▣ — return the value of the specified field for the selected resource. Basically anything you could get with the [[* ]] tag.
+* **tv._{TV name}_** ▣ – returns the value of the specified TV.  By default TV values are unprocessed.  Use _&amp;processTVs_ to change this.
+
+* **migx_[object limit]_._{MIGX TV name}_** ▣ – special processing for MIGX TVs (or for other arrays of JSON objects).  If you use this selector, setPlaceholders will loop through the array and create placeholders for each key/value pair (it skips MIGX\_id), plus a total. The placeholder names are in the format _[main placeholder name].[key][item #]_. Adding an optional number after _migx_ limits the results to the first _N_ objects in the TV.<br>_Example_: The parent resource has a MIGX TV called imagestv with two fields: title and image.  The resource has three items stored in this tv. ```photos == parent.migx.imagestv``` will set 7 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` ```[[+photos.title2]]``` ```[[+photos.image2]]``` ```[[+photos.title3]]``` ```[[+photos.image3]]``` and ```[[+photos.total]]``` (the number of items processed: 3)<br>```photos == parent.migx1.imagestv``` will set 3 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` and ```[[+photos.total]]``` (1).
+
+* **migxC._{MIGX TV name}_** ▣ – returns a count of the items in a MIGX TV.
+
+* **migxR._{MIGX TV name}_** ▣ – returns a random item from a MIGX TV.  Using the MIGX TV from the example above, ```photos == parent.migxR.imagestv``` will set the placeholders ```[[+photos.title1]]``` ```[[+photos.image1]]``` (with values from a random row in the MIGX TV) and ```[[+photos.total]]``` will be 1.
+
+* **json_[object limit]_._{JSON TV name}_** ▣ – an alias for <b>migx</b>. And <b>jsonC</b> and <b>jsonR</b> are aliases for <b>migxC</b> and <b>migxR</b>.
+
+* **level** ▣ – returns the resource's level number in the resouce tree.  A top-level resource would return 1, its child — 2, etc.
+
+* **_field name_** ▣ — return the value of the specified field for the selected resource. Basically anything you could get with the [[* ]] tag.
 
 setPlaceholders caches the results of the MODX API calls it makes, so getting multiple fields from the same resource or from various parents or children of the same resource is quite efficient.
 

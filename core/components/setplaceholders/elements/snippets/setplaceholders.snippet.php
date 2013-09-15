@@ -18,7 +18,6 @@
  *
  * @package setPlaceholders
  * @author Jason Grant
- * @version 2.1.0-pl
  *
  * Documentation, examples, bug reports, etc.
  * https://github.com/oo12/setPlaceholders
@@ -66,19 +65,17 @@ if ($ph) {
 	foreach ($ph as $field) {
 		$field = explode('!!', $field);  // separate out any default value
 		$varname = explode('==', $field[0]);  // separate out any user-defined placeholder name
-		if ( count($varname) === 1 ) {  // if there isn't one..
-			$varname = '';
-		}
-		else {  // store the placeholder name
+		if (isset($varname[1])) {  // if there is one, store the placeholder name
 			$field[0] = $varname[1];
-			$varname = trim( $varname[0] );
+			$varname = trim($varname[0]);
 		}
-		$fieldName = $field[0] = trim( $field[0] );
-		$value = $sph->getVal($fieldName);
-		if ( empty($value) && isset($field[1]) ) {  // if we didn't find a value, use the default
-			$value = $sph->getVal(trim($field[1]));
+		else {
+			$varname = $prefix . trim($field[0]);  // go with prefix + field name
 		}
-		$varname = $varname ? $varname : $prefix . $field[0]; // key: user-defined name OR prefix + field name
+		foreach ($field as $f) {  // run through the field and all fallbacks till we get a non-empty one
+			$value = $sph->getVal(trim($f));
+			if (!empty($value) || $value === 0)  { break; }  // quit as soon as we get something
+		}
 		if (is_array($value)) {  // special processing for migx
 			$varname .= '.';
 			$migx_idx = 1;

@@ -18,7 +18,6 @@
  *
  * @package setPlaceholders
  * @author Jason Grant
- * @version 2.1.0-pl
  *
  * Documentation, examples, bug reports, etc.
  * https://github.com/oo12/setPlaceholders
@@ -58,12 +57,16 @@ function getVal($fieldName) {
 
 	$fieldPrefixes = explode('.', $fieldName);
 
-/*  GET/POST variables  */
-	if ( $fieldPrefixes[0] === 'get' ) {
+
+/*  GET/POST/REQUEST variables  */
+	if ($fieldPrefixes[0] === 'get') {
 		return $_GET[substr($fieldName, 4)];
 	}
-	if ( $fieldPrefixes[0] === 'post' ) {
+	if ($fieldPrefixes[0] === 'post') {
 		return $_POST[substr($fieldName, 5)];
+	}
+	if ($fieldPrefixes[0] === 'request') {
+		return $_REQUEST[substr($fieldName, 8)];
 	}
 
 
@@ -82,44 +85,78 @@ function getVal($fieldName) {
 
 
 /*  Ultimate parent selector  */
-	if ( strncmp('Uparent', $fieldPrefixes[$idx], 7) === 0 ) {
+	if (strncmp('Uparent', $fieldPrefixes[$idx], 7) === 0) {
+		$cacheKey = $id . 'p_';
+		if (!isset($sph_cache[$cacheKey])) {
+			$sph_cache[$cacheKey] = $this->modx->getParentIds($id, 50);
+			$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]);
+		}
+		if (empty($sph_cache[$cacheKey])) {
+			return;  // no parents at all?  Give up!
+		}
 		$level = 2;
-		$r_index = substr($fieldPrefixes[$idx], 7);
-		if ( $r_index ) {  // ready any Uparent index
-			$level = 1 + (int) $r_index;
+		$prefixOffset = 7;
+		if (isset($fieldPrefixes[$idx][7]) && $fieldPrefixes[$idx][7] === 'B') {  // bounded mode
+			++$prefixOffset;
+		}
+		$r_index = substr($fieldPrefixes[$idx], $prefixOffset);
+		if ($r_index) {  // ready any Uparent index
+			$level = 1 + $r_index;
 			$fieldNameOffset += strlen($r_index);
 		}
-		$cacheKey = $id . 'p_';
-		if ( !isset($sph_cache[$cacheKey]) ) {
-			$sph_cache[$cacheKey] = $this->modx->getParentIds($id);
+		$tmp = $sph_cache[$cacheKey . 'c'] - $level;
+		if ($tmp > -1) {  // if we're not out of bounds, update $id
+			$id = $sph_cache[$cacheKey][$tmp];
 		}
-		$tmp = count($sph_cache[$cacheKey]) - $level;
-		if ($tmp < 0) {  // return NULL if we're out of bounds
-			return;
+		elseif ($prefixOffset === 7) {
+			return;  // return NULL if not in bounded mode or if there are no parents at all
 		}
-		$id = $sph_cache[$cacheKey][$tmp];
-		$fieldNameOffset += 8;
+
+		$fieldNameOffset += $prefixOffset + 1;
 		++$idx;
 	}
 
 
-/*  Parent selector  */
-	if ( strncmp('parent', $fieldPrefixes[$idx], 6) === 0 ) {
-		$level = 1;
-		$r_index = substr($fieldPrefixes[$idx], 6);
-		if ( $r_index ) {  // ready any parent index
-			$level = (int) $r_index;
+/*  Parent/Parents selector  */
+	if (strncmp('parent', $fieldPrefixes[$idx], 6) === 0) {
+		$cacheKey = $id . 'p_';
+		if (!isset($sph_cache[$cacheKey])) {
+			$sph_cache[$cacheKey] = $this->modx->getParentIds($id, 50);
+			$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]);
+		}
+		if (empty($sph_cache[$cacheKey])) {
+			return;  // no parents at all?  Give up!
+		}
+		$parentsCount = $sph_cache[$cacheKey . 'c'];
+		if (isset($fieldPrefixes[$idx][6]) && $fieldPrefixes[$idx][6] === 's') {  // parents
+			$parentsList = $sph_cache[$cacheKey];
+			array_pop($parentsList);  // the top-level parent is always 0, which we don't need
+			$parentsList = array_reverse($parentsList);  // reorder from resource upwards
+			if (isset($fieldPrefixes[$idx][7]) && $fieldPrefixes[$idx][7] === 'I') {
+				$parentsList[] = $id;  // include the resource's id too
+			}
+			return implode(',', $parentsList);
+		}
+		$level = 0;
+		$prefixOffset = 6;
+		if (isset($fieldPrefixes[$idx][6]) && $fieldPrefixes[$idx][6] === 'B') {  // bounded mode
+			++$prefixOffset;
+		}
+		$r_index = substr($fieldPrefixes[$idx], $prefixOffset);
+		if ($r_index) {  // ready any parent index
+			$level = $r_index - 1;
 			$fieldNameOffset += strlen($r_index);
 		}
-		$cacheKey = $id . 'p_';
-		if ( !isset($sph_cache[$cacheKey]) ) {
-			$sph_cache[$cacheKey] = $this->modx->getParentIds($id);
+		if ($level < $parentsCount && $parentsCount > 1) {  // if we're not out of bounds, update $id
+			$id = $sph_cache[$cacheKey][$level];
 		}
-		if ( $level > count($sph_cache[$cacheKey]) ) {  // return NULL if out of bounds
-			return;
+		elseif ($prefixOffset === 6) {
+			return;  // return NULL if not in bounded mode
 		}
-		$id = $sph_cache[$cacheKey][$level - 1];
-		$fieldNameOffset += 7;
+		elseif ($parentsCount > 1) {  // bounded mode
+			$id = $sph_cache[$cacheKey][ $parentsCount - 2 ];  // set id to ultimate parent
+		}
+		$fieldNameOffset += $prefixOffset + 1;
 		++$idx;
 	}
 
@@ -128,15 +165,16 @@ function getVal($fieldName) {
 	$tmp = substr($fieldPrefixes[$idx], 0, 4);
 	if ($tmp === 'prev' || $tmp === 'next' || $tmp === 'inde') {
 		$cacheKey = $id . 'p_';
-		if ( !isset($sph_cache[$cacheKey]) ) {  // first get the parent
-			$sph_cache[$cacheKey] = $this->modx->getParentIds($id);
+		if (!isset($sph_cache[$cacheKey])) {  // first get the parent...
+			$sph_cache[$cacheKey] = $this->modx->getParentIds($id, 50);
+			$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]);
 		}
-		if ( empty($sph_cache[$cacheKey]) ) {  // return if no parents
+		if (empty($sph_cache[$cacheKey])) {  // return if no parents
 			return;
 		}
 		$tmp_id = $sph_cache[$cacheKey][0];
 		$cacheKey = $tmp_id . $this->sortby . $this->sortdir[0];
-		if ( !isset($sph_cache[$cacheKey]) )  {  // then its children
+		if (!isset($sph_cache[$cacheKey]))  {  // ...then its children
 			$q = $this->modx->newQuery('modResource');
 			$q->where(array('parent'=> $tmp_id, 'published' => 1, 'deleted' => 0));
 			$q->select('modResource.id');
@@ -146,14 +184,14 @@ function getVal($fieldName) {
 			$sph_cache[$cacheKey] = $q->stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 		}
 		$pos = array_search($id, $sph_cache[$cacheKey]);
-		if ( $pos === FALSE ) {
+		if ($pos === FALSE) {
 			return;
 		}
-		if ( $tmp === 'inde')  {  // return id's position amongst its siblings
+		if ($tmp === 'inde')  {  // return id's position amongst its siblings
 			return $pos + 1;
 		}
 		$r_index = substr($fieldPrefixes[$idx], 4);
-		if ( $r_index ) {  // ready any next/prev offset
+		if ($r_index) {  // ready any next/prev offset
 			$fieldNameOffset += strlen($r_index);
 			if ($r_index !== 'M') {  // if it's not a "max" sibling
 				$r_index = (int) $r_index;
@@ -221,7 +259,7 @@ function getVal($fieldName) {
 				++$fieldNameOffset;
 			}
 			else {  // get the specified child
-				$child = -1 + (int) $r_index;
+				$child = $r_index - 1;
 				if ($child < 0) {
 					$child += $cidsCount + 2;
 					if ($child < 0) {  // return if index is out of bounds
@@ -283,10 +321,11 @@ function getVal($fieldName) {
 
 	if ( $fieldPrefixes[$idx] === 'level' ) {  // return what level this is on
 		$cacheKey = $id . 'p_';
-		if ( !isset($sph_cache[$cacheKey]) ) {
-			$sph_cache[$cacheKey] = $this->modx->getParentIds($id);
+		if (!isset($sph_cache[$cacheKey])) {
+			$sph_cache[$cacheKey] = $this->modx->getParentIds($id, 50);
+			$sph_cache[$cacheKey . 'c'] = count($sph_cache[$cacheKey]);
 		}
-		return count($sph_cache[$cacheKey]);
+		return $sph_cache[$cacheKey . 'c'];
 	}
 
 
