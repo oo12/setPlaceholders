@@ -34,6 +34,8 @@ if (! function_exists('getSnippetContent')) {
         return $o;
     }
 }
+include $sources['data'].'/properties/properties.setplaceholders.php';
+$snippet = getSnippetContent($sources['source_core'].'/elements/snippets/setplaceholders.snippet.php');
 $snippets = array();
 
 $snippets[1]= $modx->newObject('modSnippet');
@@ -43,8 +45,28 @@ $snippets[1]->fromArray(array(
     'description' => 'A snippet for getting fields and setting placeholders. Documentation: https://github.com/oo12/setPlaceholders',
     'snippet' => getSnippetContent($sources['source_core'].'/elements/snippets/setplaceholders.snippet.php'),
 ),'',true,true);
-$properties = include $sources['data'].'/properties/properties.setplaceholders.php';
 $snippets[1]->setProperties($properties);
+
+$snippets[2]= $modx->newObject('modSnippet');
+$snippets[2]->fromArray(array(
+    'id' => 2,
+    'name' => 'sph',
+    'description' => 'An short alias for setPlaceholders',
+    'snippet' => getSnippetContent($sources['source_core'].'/elements/snippets/setplaceholders.snippet.php'),
+),'',true,true);
+$snippets[2]->setProperties($properties);
+
+
+$snippets[3]= $modx->newObject('modSnippet');
+$snippets[3]->fromArray(array(
+    'id' => 3,
+    'name' => 'spho',
+    'description' => 'An short alias for setPlaceholders, with output returned (&output=`1`)',
+    'snippet' => getSnippetContent($sources['source_core'].'/elements/snippets/setplaceholders.snippet.php'),
+),'',true,true);
+$properties[4]['value'] = '1';  // change value for &output
+$snippets[3]->setProperties($properties);
+
 unset($properties);
 
 return $snippets;
