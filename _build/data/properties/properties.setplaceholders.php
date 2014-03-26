@@ -122,5 +122,3 @@ $properties = array(
 		'lexicon' => 'setplaceholders:default'
 	)
 );
-
-return $properties;

@@ -1,4 +1,10 @@
-Changelog for setPlaceholders
+setPlaceholders Changelog
+
+2.2.1-pl [25.03.2014]
+---------------------
+* Add short convenience aliases for setPlaceholders snippet: sph
+  and spho (with &output=`1`)
+
 
 2.2.0-pl [15.09.2013]
 ---------------------
