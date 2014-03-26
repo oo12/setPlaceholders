@@ -1,4 +1,4 @@
-setPlaceholders 2.2
+setPlaceholders 2.2.1
 ===============
 
 A MODX Revolution snippet for getting fields and setting placeholders. Download from the MODX [Extras Repository](http://modx.com/extras/package/setplaceholders).
@@ -8,7 +8,8 @@ setPlaceholders combines the usefulness of placeholders—which are rather like 
 New and changed in this version
 -----------------------------
 
-Please see the [changelog](https://github.com/oo12/setPlaceholders/blob/master/core/components/setplaceholders/docs/changelog.txt) for a summary.  Version 2.x has a few changes which affect backwards compatibility with 1.x, so please look through it if you're upgrading.
+Please see the [changelog](https://github.com/oo12/setPlaceholders/blob/master/core/components/setplaceholders/docs/changelog.txt) for a summary. Version 2.2.1 adds two short aliases for the setPlaceholders snippet: sph and spho. sph is exactly the same, just easier to type: ```[[setPlaceholders? ... ]]``` or ```[[sph? ... ]]```.  spho (o for output) is equivalent to ```[[setPlaceholders? &output=`1` ... ]]```
+
 
 Examples
 --------
@@ -32,14 +33,14 @@ Sets the placeholders:<br>
 <br>
 
 * As a getResourceField replacement:<br>
-<pre>[[setPlaceholders? &ph=`Uparent2.tv.someTV !! "No such TV"` &output=`1`]]</pre>
+<pre>[[spho? &ph=`Uparent2.tv.someTV !! "No such TV"`]]</pre>
 Returns the value of someTV for the second-highest parent of the current resource, or &ldquo;No such TV&rdquo; if that TV is empty or not found.  It also puts this value in ```[[+sph.Uparent2.tv.someTV]]```<br>
 This is the equivalent of:<br>
 <pre>[[getResourceField? &id=`[[UltimateParent? &topLevel=`3`]]`
 &nbsp; &field=`someTV` &isTV=`1` &default=`No such TV`]]</pre>
 
 * Simple next / previous, first / last navigation:
-<pre>[[setPlaceholders?
+<pre>[[sph?
 &nbsp; &ph=`next == next.uri || prev == prev.uri || first == prevM.uri || last == nextM.uri`
 ]]<br>
 &lt;a href="[[+first]]"&gt;First&lt;a&gt;
