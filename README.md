@@ -136,7 +136,7 @@ These are evaluated in the order listed.  Items ending with a ▣ return a value
 
 _All selector names are cAsE SensitiVe._
 
-* **get._{variable name}_** ▣ – a variable from $\_GET (be sure to call setPlaceholders uncached if you're using either get, post or request)<br>_Example_: ```get.page``` – the value of $_GET['page']
+* **get._{variable name}_** ▣ – a variable from $_GET (be sure to call setPlaceholders uncached if you're using either get, post or request)<br> _Example_: ```get.page``` – the value of $_GET['page']
 
 * **post._{variable name}_** ▣ – a variable from $_POST
 
@@ -144,25 +144,25 @@ _All selector names are cAsE SensitiVe._
 
 * **_resource\_id_.** – Selects a specific resource. Otherwise the value of _&amp;id_ (by default the current resource) is used.<br>_Example_: ```12.pagetitle``` – get the pagetitle of resource 12.
 
-* **Uparent_[level]_.** – selects the resource's ultimate parent, that is, its top-level ancestor in the resource tree. (**Uparent** and **parent** are essentially mirror images of one another.) Use the optional level number to move further down the tree.<br>_Examples_: ```Uparent.id``` – the resource's ultimate parent's id<br>```Uparent2.id``` – the resource's 2nd top-most parent's id
+* **Uparent<em>[level]</em>.** – selects the resource's ultimate parent, that is, its top-level ancestor in the resource tree. (**Uparent** and **parent** are essentially mirror images of one another.) Use the optional level number to move further down the tree.<br>_Examples_: ```Uparent.id``` – the resource's ultimate parent's id<br>```Uparent2.id``` – the resource's 2nd top-most parent's id
 
-* **UparentB_[level]_.** – bounded Uparent.  Unlike the standard **Uparent** which returns nothing if there is no ultimate parent (for a resource already at the top of the tree, for example), **UparentB** will select the resource itself if there isn’t an ultimate parent.<br>_Example_: ```UparentB.id``` is equivalent to ```Uparent.id !! id```.
+* **UparentB<em>[level]</em>.** – bounded Uparent.  Unlike the standard **Uparent** which returns nothing if there is no ultimate parent (for a resource already at the top of the tree, for example), **UparentB** will select the resource itself if there isn’t an ultimate parent.<br>_Example_: ```UparentB.id``` is equivalent to ```Uparent.id !! id```.
 
-* **parent_[level]_.** – selects the resource's parent. Use the optional level number to move further up the tree.<br>_Examples_: ```parent.id``` – the resource’s parent’s id<br>```parent2.id``` – the resource’s grandparent’s id
+* **parent<em>[level]</em>.** – selects the resource's parent. Use the optional level number to move further up the tree.<br>_Examples_: ```parent.id``` – the resource’s parent’s id<br>```parent2.id``` – the resource’s grandparent’s id
 
-* **parentB_[level]_.** – bounded parent. Similar idea to **UparentB** above.<br>_Example_: ```parent25.id``` will return nothing (unless you have a crazy deep resource tree), but ```parentB25.id``` will be equivalent to ```UparentB.id``` since it won't let you go past the top of the resource tree.
+* **parentB<em>[level]</em>.** – bounded parent. Similar idea to **UparentB** above.<br>_Example_: ```parent25.id``` will return nothing (unless you have a crazy deep resource tree), but ```parentB25.id``` will be equivalent to ```UparentB.id``` since it won't let you go past the top of the resource tree.
 
 * **parents** ▣ – Returns a comma-separated list of the resource’s parents, from the ultimate parent on the left to the immediate parent on the right. Sometimes useful for passing on to pdoResources, getResources or similar.
 
 * **parentsI** ▣ – (uppercase i at the end) Same as _parents_ but adds the resource’s id as the last term of the string.
 
-* **next_[index]_.** – selects the resource's next sibling. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order. Add a numeric index to jump ahead by that many. An index of <b>M</b> (max) selects the last sibling.<br>_Example_: ```next2.id``` – returns the id of the resource's sibling-after-next.
+* **next<em>[index]</em>.** – selects the resource's next sibling. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order. Add a numeric index to jump ahead by that many. An index of <b>M</b> (max) selects the last sibling.<br>_Example_: ```next2.id``` – returns the id of the resource's sibling-after-next.
 
-* **prev_[index]_.** – selects the resource's previous sibling. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order. Add a numeric index to jump back by that many. An index of <b>M</b> (max) selects the first sibling.
+* **prev<em>[index]</em>.** – selects the resource's previous sibling. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order. Add a numeric index to jump back by that many. An index of <b>M</b> (max) selects the first sibling.
 
 * **index** ▣ – Returns a resource's index within a list of its siblings. The first sibling will return 1, the second — 2, and so on.
 
-* **child_[child #]_.** – selects one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. Unlike other selectors, ```child```* may be repeated multiple times to move further down the tree.<br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-1.id``` – id of the resource's last child<br>```child-2.id``` – id of the resource's second-to-last child<br>```child.child-1.id``` — id of the first child's last child
+* **child<em>[child #]</em>.** – selects one of the resource's children. Use _&amp;sortby_ and _&amp;sortdir_ to control the sort order and the optional child number to specify a particular child. Negative child numbers start with the last child and move towards the first. Unlike other selectors, ```child```* may be repeated multiple times to move further down the tree.<br>_Examples_: ```child.id``` – id of the resource's first child<br>```child3.id``` – id of the resource's third child<br>```child-1.id``` – id of the resource's last child<br>```child-2.id``` – id of the resource's second-to-last child<br>```child.child-1.id``` — id of the first child's last child
 
 * **childR.** – selects a random child. This selected child is cached, so you may reuse the selector with the same parent multiple times within a setPlaceholders call to get different values from the same random child. (Setting _&amp;staticCache_ will leave it available for the next setPlacholders call as well.)<br>_Example_: ```12.childR.id || 12.childR.pagetitle``` — returns the id number and pagetitle of the same randomly selected child of resource 12.
 
@@ -170,13 +170,13 @@ _All selector names are cAsE SensitiVe._
 
 * **tv._{TV name}_** ▣ – returns the value of the specified TV.  By default TV values are unprocessed.  Use _&amp;processTVs_ to change this.
 
-* **migx_[object limit]_._{MIGX TV name}_** ▣ – special processing for MIGX TVs (or for other arrays of JSON objects).  If you use this selector, setPlaceholders will loop through the array and create placeholders for each key/value pair (it skips MIGX\_id), plus a total. The placeholder names are in the format _[main placeholder name].[key][item #]_. Adding an optional number after _migx_ limits the results to the first _N_ objects in the TV.<br>_Example_: The parent resource has a MIGX TV called imagestv with two fields: title and image.  The resource has three items stored in this tv. ```photos == parent.migx.imagestv``` will set 7 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` ```[[+photos.title2]]``` ```[[+photos.image2]]``` ```[[+photos.title3]]``` ```[[+photos.image3]]``` and ```[[+photos.total]]``` (the number of items processed: 3)<br>```photos == parent.migx1.imagestv``` will set 3 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` and ```[[+photos.total]]``` (1).
+* **migx<em>[object limit].{MIGX TV name}</em>** ▣ – special processing for MIGX TVs (or for other arrays of JSON objects).  If you use this selector, setPlaceholders will loop through the array and create placeholders for each key/value pair (it skips MIGX\_id), plus a total. The placeholder names are in the format _[main placeholder name].[key][item #]_. Adding an optional number after _migx_ limits the results to the first _N_ objects in the TV.<br>_Example_: The parent resource has a MIGX TV called imagestv with two fields: title and image.  The resource has three items stored in this tv. ```photos == parent.migx.imagestv``` will set 7 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` ```[[+photos.title2]]``` ```[[+photos.image2]]``` ```[[+photos.title3]]``` ```[[+photos.image3]]``` and ```[[+photos.total]]``` (the number of items processed: 3)<br>```photos == parent.migx1.imagestv``` will set 3 placeholders: ```[[+photos.title1]]``` ```[[+photos.image1]]``` and ```[[+photos.total]]``` (1).
 
 * **migxC._{MIGX TV name}_** ▣ – returns a count of the items in a MIGX TV.
 
 * **migxR._{MIGX TV name}_** ▣ – returns a random item from a MIGX TV.  Using the MIGX TV from the example above, ```photos == parent.migxR.imagestv``` will set the placeholders ```[[+photos.title1]]``` ```[[+photos.image1]]``` (with values from a random row in the MIGX TV) and ```[[+photos.total]]``` will be 1.
 
-* **json_[object limit]_._{JSON TV name}_** ▣ – an alias for <b>migx</b>. And <b>jsonC</b> and <b>jsonR</b> are aliases for <b>migxC</b> and <b>migxR</b>.
+* **json<em>[object limit].{JSON TV name}</em>** ▣ – an alias for <b>migx</b>. And <b>jsonC</b> and <b>jsonR</b> are aliases for <b>migxC</b> and <b>migxR</b>.
 
 * **level** ▣ – returns the resource's level number in the resouce tree.  A top-level resource would return 1, its child — 2, etc.
 
