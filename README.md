@@ -122,7 +122,7 @@ Properties
 
 &amp;ph is where you specify all the placeholders you want set.  Separate multiple ones by ```||```.
 
-A placeholder consists of 1&ndash;3 parts:
+A placeholder consists of 1–3 parts:
 
 1. _placeholder_name ==_ (optional). If specified, this will be the placeholder name.  If left off, the placeholder name will be formed from a prefix (_&amp;prefix_) + the field name.<br>**Examples**: ```pid == parent.id``` – parent.id will be stored in [[+pid]]<br> ```parent.id``` – parent.id will be stored in [[+sph.parent.id]] since no specific placeholder name was given and _sph._ is the default prefix.
 
@@ -136,7 +136,7 @@ These are evaluated in the order listed.  Items ending with a ▣ return a value
 
 _All selector names are cAsE SensitiVe._
 
-* **get._{variable name}_** ▣ – a variable from $_GET (be sure to call setPlaceholders uncached if you're using either get, post or request)<br> _Example_: ```get.page``` – the value of $_GET['page']
+* **get._{variable name}_** ▣ – a variable from $&#95;GET (be sure to call setPlaceholders uncached if you're using either get, post or request)<br> _Example_: ```get.page``` – the value of $&#95;GET['page']
 
 * **post._{variable name}_** ▣ – a variable from $_POST
 
