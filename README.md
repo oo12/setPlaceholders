@@ -136,13 +136,13 @@ These are evaluated in the order listed.  Items ending with a ▣ return a value
 
 _All selector names are cAsE SensitiVe._
 
-* **get._{variable name}_** ▣ – a variable from $_GET (be sure to call setPlaceholders uncached if you're using either get, post or request)<br>_Example_: ```get.page``` – the value of $_GET['page']
+* **get._{variable name}_** ▣ – a variable from $\_GET (be sure to call setPlaceholders uncached if you're using either get, post or request)<br>_Example_: ```get.page``` – the value of $_GET['page']
 
 * **post._{variable name}_** ▣ – a variable from $_POST
 
 * **request._{variable name}_** ▣ – a variable from $_REQUEST
 
-* **_resource_id_.** – Selects a specific resource. Otherwise the value of _&amp;id_ (by default the current resource) is used.<br>_Example_: ```12.pagetitle``` – get the pagetitle of resource 12.
+* **_resource\_id_.** – Selects a specific resource. Otherwise the value of _&amp;id_ (by default the current resource) is used.<br>_Example_: ```12.pagetitle``` – get the pagetitle of resource 12.
 
 * **Uparent_[level]_.** – selects the resource's ultimate parent, that is, its top-level ancestor in the resource tree. (**Uparent** and **parent** are essentially mirror images of one another.) Use the optional level number to move further down the tree.<br>_Examples_: ```Uparent.id``` – the resource's ultimate parent's id<br>```Uparent2.id``` – the resource's 2nd top-most parent's id
 
